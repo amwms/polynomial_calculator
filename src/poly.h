@@ -111,6 +111,12 @@ static inline bool PolyIsZero(const Poly *p) {
 }
 
 /**
+ * Tworzy wielomian.
+ * @param[in] size : liczba składników wielomianu
+ */
+Poly PolyCreate(size_t size);
+
+/**
  * Usuwa wielomian z pamięci.
  * @param[in] p : wielomian
  */
