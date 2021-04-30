@@ -5,6 +5,7 @@
 #include "polyMath.h"
 #include "poly.h"
 
+#include <stdio.h>
 /**
  * Komparator do qsorta - sortowanie po wykładnikach malejaco.
  * @param[in] a : jednomian
@@ -46,15 +47,15 @@ Poly PolyCreate(size_t size) {
 }
 
 void PolyDestroy(Poly *p) {
-    if (p->arr == NULL){
-        free(p);
-        return;
-    }
-
-    for (size_t i = 0; i < p->size; i++) {
-        MonoDestroy(&p->arr[i]);
-        free(&p->arr[i]);
-    }
+    // if (p->arr == NULL){
+    //     free(p);
+    //     return;
+    // }
+    //
+    // for (size_t i = 0; i < p->size; i++) {
+    //     MonoDestroy(&p->arr[i]);
+    //     free(&p->arr[i]);
+    // }
 }
 
 Poly PolyClone(const Poly *p) {
@@ -64,7 +65,6 @@ Poly PolyClone(const Poly *p) {
     Poly p2 = *p;
 
     // p2.arr = safeMalloc(sizeof(&(p->arr)));
-
     p2.arr = safeMalloc(sizeof(Mono) * p->size);
 
     for (size_t i = 0; i < p->size; i++) {
@@ -81,19 +81,33 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
         return PolyClone(p);
 
     if (PolyIsCoeff(p)) {
-        if (PolyIsCoeff(q))
+        if (PolyIsCoeff(q)) {
             return CoeffAddCoeff(p, q);
+        }
         return NonCoeffAddCoeff(q, p);
     }
+
+    // printf("SHOULD BE HERE\n");
     if (PolyIsCoeff(q))
         return NonCoeffAddCoeff(p, q);
 
-    return NonCoeffAddCoeff(p, p);
+    // printf("AAAAAAAAAAAAAAAAAAAAA");
+    return NonCoeffAddNonCoeff(p, q);
 }
 
 Poly PolyAddMonos(size_t count, const Mono monos[]) {
     Mono *myMonos = copyMonoArray(count, monos);
     sortMonosByExp(count, myMonos);
+
+
+
+    //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
+    if (count == 1) {
+        if (PolyIsCoeff(&monos[0].p) && monos[0].exp == 0)
+        return PolyFromCoeff(myMonos[0].p.coeff);
+        return (Poly) {.size = 1, .arr = myMonos};
+    }
+
 
     int diffExps = howManyDiffExp(count, myMonos);
     Poly result = PolyCreate(diffExps);
@@ -101,12 +115,6 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
     poly_exp_t helper_exp = myMonos[0].exp;
     int result_id = 0;
 
-    //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
-    if (count == 1) {
-        if (PolyIsCoeff(&monos[0].p) && monos[0].exp == 0)
-            return PolyFromCoeff(result.arr[0].p.coeff);
-        return (Poly) {.size = 1, .arr = myMonos};
-    }
 
     // idziemy po kolei i sprawdzamy czy sąsiednie wykładniki czy są równe jeśli nie
     // to wstawiamy ja tak to robimy poly PolyAdd
@@ -114,15 +122,22 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
         if (PolyIsZero(&myMonos[i].p))
             continue;
 
+        //DEBUUUUUUUUUUUUUUUUUUUUUUGGGGGGGGGGGGGGGGG
+        // printf("POLY ADD MONOS EXP COMPARE: %d %d\n", myMonos[i-1].exp, myMonos[i].exp);
         if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
-
             //NOT EFFICIENT
             // Poly pom = PolyClone(&helper);
             // PolyDestroy(&helper);
             helper = PolyAdd(&helper, &myMonos[i].p);
+
+            // printf("WORKED THIS IS HELPER:\n");
+
+
             // PolyDestroy(&pom);
             continue;
         }
+
+
 
         result.arr[result_id] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
 
@@ -134,7 +149,10 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
         result_id++;
     }
 
-    if (result_id < diffExps - 1) {
+    // printf("THIS IS RESULT_ID: %d\n", result_id);
+    // printf("THIS IS DIFFEXP: %d\n", diffExps);
+
+    if (result_id < diffExps /*- 1*/) {
         result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
     }
 
