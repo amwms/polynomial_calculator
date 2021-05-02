@@ -10,6 +10,26 @@ Uwaga: aktualna treść zadania znajduje się w [Moodle](https://moodle.mimuw.ed
 Tegoroczne duże zadanie polega na zaimplementowaniu operacji na wielomianach
 rzadkich wielu zmiennych.
 
-TODO
+Jeśli wystąpi błąd krytyczny, program kończy się awaryjnie kodem 1.
+
+Zaimplementowane są podstawowe działania na wielomianach opisane w interface poly.h.
+
+
+W implementacji interface'u każdą operację (dodawanie i mnożenie dwóch wielomianów)
+dzieję na trzy "pod operacje":
+
+- dodawanie (mnożenie) do siebie dwóch wielomianów będących współczynnikami
+- dodawanie (mnożenie) do siebie dwóch wielomianów nie będących współczynnikami
+- dodawanie (mnożenie) do siebie wielomianów, jednego, który nie jest współczynnikiem
+ i jednego, który jest współczynnikiem
+
+
+Zachowuję również dwa niezmienniki dotyczące wielomianów:
+
+- wielomian składa się z jednomianów które są posortowane po wykładnikach malejąco
+- wielomian jest uproszczony najbardziej jak się da (jednomiany, z których się składa
+ są uproszczone najbardziej jak się da, a w przypadku gdy wielomian się równa
+
+ @f$x_0^0(współczynnik)@f$, zamieniam go na wielomian będący współczynnikiem) i nie zawiera jednomianów zerowych (w swoim składzie)
 
 */
