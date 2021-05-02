@@ -1,11 +1,16 @@
+/** @file
+  Implementacja biblioteki podstawowych operacji na wielomianach wielu zmiennych.
+
+  @author Anna Stawiska <as429600@students.mimuw.edu.pl>
+  @date 02/05/2021
+*/
+
 #include <assert.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include "poly.h"
 
-#include <stdio.h>
-//MEMORY_C
 /**
  * Sprawdza czy skończya się pamięć.
  * @param[in] ptr : pionter na miejsce w pamięci
@@ -41,7 +46,6 @@ void* safeRealloc(void *point, size_t size) {
     return ptr;
 }
 
-//POLYMATH_C
 /**
 * Sprawdza czy jednomiany w wielomianie są posortowane malejąco po wykładnikach
 * @param[in] p : wielomian
@@ -99,9 +103,9 @@ poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
 }
 
 /**
- * Dodaje dwa wielomiany które są współczynnikikami.
- * @param[in] p : wielomian (współczynnik) @f$p@f$
- * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * Dodaje dwa wielomiany które są współczynnikami.
+ * @param[in] p : wielomian (współczynnik)
+ * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
 Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
@@ -114,8 +118,8 @@ Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
 
 /**
  * Dodaje dwa wielomiany - wielomian (nie będący współczynnikiem) i wpółczynnik.
- * @param[in] p : wielomian @f$p@f$
- * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @param[in] p : wielomian
+ * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
 Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
@@ -162,8 +166,8 @@ Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
 
 /**
  * Dodaje dwa wielomiany, które nie są współczynnikami.
- * @param[in] p : wielomian @f$p@f$
- * @param[in] q : wielomian @f$q@f$
+ * @param[in] p : wielomian
+ * @param[in] q : wielomian
  * @return @f$p + q@f$
  */
 Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
@@ -190,8 +194,8 @@ Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
 
 /**
  * Mnoży dwa wielomiany które są współczynnikikami.
- * @param[in] p : wielomian (współczynnik) @f$p@f$
- * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @param[in] p : wielomian (współczynnik)
+ * @param[in] q : wielomian (współczynnik)
  * @return @f$p \cdot q@f$
  */
 Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
@@ -204,8 +208,8 @@ Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
 
 /**
  * Mnoży dwa wielomiany - wielomian (nie będący współczynnikiem) i wpółczynnik.
- * @param[in] p : wielomian @f$p@f$
- * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @param[in] p : wielomian
+ * @param[in] q : wielomian (współczynnik)
  * @return @f$p \cdot q@f$
  */
 Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
@@ -257,9 +261,9 @@ Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
 }
 
 /**
- * Mnoy dwa wielomiany, które nie są współczynnikami.
- * @param[in] p : wielomian @f$p@f$
- * @param[in] q : wielomian @f$q@f$
+ * Mnoży dwa wielomiany, które nie są współczynnikami.
+ * @param[in] p : wielomian
+ * @param[in] q : wielomian
  * @return @f$p \cdot q@f$
  */
 Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
