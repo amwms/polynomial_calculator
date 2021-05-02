@@ -35,6 +35,7 @@ static void* safeMalloc(size_t size) {
 /**
  * Reallocuje blok pamięci sprawdzając czy nie skończyła się pamięć.
  * @param[in] size : rozmiar pamięci, który chcemy zaallocować
+ * @param[in] point : miejsce w pamięci gdzie chcemy allocować
  * @return miejsce zaalocowanej pamięci
  */
 static void* safeRealloc(void *point, size_t size) {
@@ -294,7 +295,7 @@ static Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
 /**
  * Podnosi a do potęgi x.
  * @param[in] a : podstawa
- * @param[in] q : wykładnik
+ * @param[in] x : wykładnik
  * @return @f$ a^x @f$
  */
 static poly_coeff_t power(poly_coeff_t a, poly_exp_t x) {
