@@ -4,7 +4,6 @@
   @author Anna Stawiska <as429600@students.mimuw.edu.pl>
   @date 02/05/2021
 */
-
 #include <assert.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -15,7 +14,7 @@
  * Sprawdza czy skończya się pamięć.
  * @param[in] ptr : pionter na miejsce w pamięci
  */
-void error(void *ptr) {
+static void error(void *ptr) {
     if (ptr == NULL)
         exit(1);
 }
@@ -25,7 +24,7 @@ void error(void *ptr) {
  * @param[in] size : rozmiar pamięci, który chcemy zaallocować
  * @return miejsce zaalocowanej pamięci
  */
-void* safeMalloc(size_t size) {
+static void* safeMalloc(size_t size) {
     void *ptr = (void *) malloc(size);
 
     error(ptr);
@@ -38,7 +37,7 @@ void* safeMalloc(size_t size) {
  * @param[in] size : rozmiar pamięci, który chcemy zaallocować
  * @return miejsce zaalocowanej pamięci
  */
-void* safeRealloc(void *point, size_t size) {
+static void* safeRealloc(void *point, size_t size) {
     void *ptr = (void *) realloc(point, size);
 
     error(ptr);
@@ -51,7 +50,7 @@ void* safeRealloc(void *point, size_t size) {
 * @param[in] p : wielomian
 * @return czy jednomiany w wielomianie są posortowane malejąco po wykładnikach
 */
-bool isSorted(const Poly *p) {
+static inline bool isSorted(const Poly *p) {
     if(PolyIsCoeff(p))
         return true;
 
@@ -69,7 +68,7 @@ bool isSorted(const Poly *p) {
  * @param[in] monos : tablica jednomianów
  * @return liczba równych wykładników
  */
-size_t howManyDiffExp(size_t count, Mono monos[]) {
+static size_t howManyDiffExp(size_t count, Mono monos[]) {
     size_t diff = 1;
 
     for (size_t i = 1; i < count; i++) {
@@ -88,7 +87,7 @@ size_t howManyDiffExp(size_t count, Mono monos[]) {
  * @param[in] b : jednomian
  * @return różnica wykładników jednomianów
  */
-int compareMonosByExp(Mono *a, Mono *b) {
+static int compareMonosByExp(Mono *a, Mono *b) {
     return a->exp - b->exp;
 }
 
@@ -98,7 +97,7 @@ int compareMonosByExp(Mono *a, Mono *b) {
  * @param[in] b : wykładnik
  * @return większy wykładnik
  */
-poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
+static poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
     return a < b ? b : a;
 }
 
@@ -108,7 +107,7 @@ poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
-Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
+static Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
     assert(PolyIsCoeff(p) && PolyIsCoeff(q));
 
     poly_coeff_t value = p->coeff + q->coeff;
@@ -122,7 +121,7 @@ Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
-Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
+static Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
     assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
     assert(isSorted(p));
 
@@ -170,7 +169,7 @@ Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian
  * @return @f$p + q@f$
  */
-Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
+static Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
     assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
     assert(isSorted(p) && isSorted(q));
 
@@ -198,7 +197,7 @@ Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p \cdot q@f$
  */
-Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
+static Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
     assert(PolyIsCoeff(p) && PolyIsCoeff(q));
 
     poly_coeff_t value = p->coeff * q->coeff;
@@ -212,7 +211,7 @@ Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p \cdot q@f$
  */
-Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
+static Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
     assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
     assert(isSorted(p));
 
@@ -266,7 +265,7 @@ Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian
  * @return @f$p \cdot q@f$
  */
-Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
+static Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
     assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
     assert(isSorted(p) && isSorted(q));
 
@@ -298,7 +297,7 @@ Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wykładnik
  * @return @f$ a^x @f$
  */
-poly_coeff_t power(poly_coeff_t a, poly_exp_t x) {
+static poly_coeff_t power(poly_coeff_t a, poly_exp_t x) {
     if (x == 0)
         return (poly_coeff_t) 1;
 
@@ -314,7 +313,7 @@ poly_coeff_t power(poly_coeff_t a, poly_exp_t x) {
  * @param[in] b : jednomian
  * @return różnica wykładników jednomianów
  */
-int compareMonosByExpQsort(const void *a, const void *b) {
+static int compareMonosByExpQsort(const void *a, const void *b) {
     return -compareMonosByExp((Mono*) a, (Mono*) b);
 }
 
@@ -324,7 +323,7 @@ int compareMonosByExpQsort(const void *a, const void *b) {
  * @param[in] monos : tablica jednomianów
  * @return
  */
-void sortMonosByExp(size_t count, Mono *monos) {
+static void sortMonosByExp(size_t count, Mono *monos) {
     qsort(monos, count, sizeof(Mono), compareMonosByExpQsort);
 }
 
@@ -335,7 +334,7 @@ void sortMonosByExp(size_t count, Mono *monos) {
  * @param[in] monos : tablica jednomianów
  * @return skopiowana tablica jednomianów
  */
-Mono* copyMonoArray(size_t count, const Mono monos[]) {
+static Mono* copyMonoArray(size_t count, const Mono monos[]) {
     Mono *result = safeMalloc(sizeof(Mono) * count);
 
     for (size_t i = 0; i < count; i++)
@@ -444,7 +443,7 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
 
     PolyDestroy(&helper);
 
-    //przepisujemy tak, żeby nie było wśród współczynników zer
+    //przepisujemy tak, żeby nie było wśród jednomianów jednomianów zerowych
     size_t zeros = 0;
     for (size_t i = 0; i < diffExps; i++) {
         if (PolyIsZero(&result.arr[i].p))
