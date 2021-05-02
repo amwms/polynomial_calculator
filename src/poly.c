@@ -398,7 +398,6 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
     Mono *myMonos = copyMonoArray(count, monos);
     sortMonosByExp(count, myMonos);
 
-    //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
     if (count == 1) {
         if (PolyIsCoeff(&monos[0].p) && monos[0].exp == 0) {
             poly_coeff_t coeffFinal = myMonos[0].p.coeff;
@@ -416,11 +415,9 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
     size_t diffExps = howManyDiffExp(count, myMonos);
     Poly result = PolyCreate(diffExps);
     Poly helper = myMonos[0].p;
-    poly_exp_t helper_exp = myMonos[0].exp;
-    size_t result_id = 0;
+    poly_exp_t helperExp = myMonos[0].exp;
+    size_t resultId = 0;
 
-    // idziemy po kolei i sprawdzamy czy sąsiednie wykładniki czy są równe jeśli nie
-    // to wstawiamy do result, jak tak to robimy poly PolyAdd i nie wstawiamy
     for (size_t i = 1; i < count; i++) {
         if (PolyIsZero(&myMonos[i].p))
             continue;
@@ -434,20 +431,20 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
             continue;
         }
 
-        result.arr[result_id] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
+        result.arr[resultId] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
 
         PolyDestroy(&helper);
         helper = myMonos[i].p;
-        helper_exp = myMonos[i].exp;
-        result_id++;
+        helperExp = myMonos[i].exp;
+        resultId++;
     }
 
-    if (result_id < diffExps)
-        result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
+    if (resultId < diffExps)
+        result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
 
     PolyDestroy(&helper);
 
-    //przepisujemy tak żeby nie było wśród współczynników zer i żeby wielomian się zgadzał rozmiarem
+    //przepisujemy tak, żeby nie było wśród współczynników zer
     size_t zeros = 0;
     for (size_t i = 0; i < diffExps; i++) {
         if (PolyIsZero(&result.arr[i].p))
@@ -456,7 +453,6 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
 
     Poly resultFinal = PolyCreate(diffExps - zeros);
 
-    //tworzymy resultFinal za pomocą PŁYTKIEJ kopii result
     if (!PolyIsCoeff(&resultFinal)) {
         size_t id = 0;
         for(size_t i = 0; i < diffExps; i++) {
@@ -466,7 +462,7 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
             }
         }
 
-        //jeśli wielomian jest współczynnikiem "zbijamy go" zwracamy współczynnik
+        //jeśli wielomian jest współczynnikiem, zwracamy współczynnik
         if (resultFinal.size == 1 && PolyIsCoeff(&resultFinal.arr[0].p) && resultFinal.arr[0].exp == 0) {
             poly_coeff_t coeffFinal = resultFinal.arr[0].p.coeff;
             PolyDestroy(&resultFinal);
@@ -477,7 +473,6 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
         }
     }
 
-    //myMonos i result skopiowaliśmy do wyniku za pomoca PŁYTKIEJ kopii dlatego wystarczy tylko free()
     free(myMonos);
     free(result.arr);
 
@@ -521,7 +516,7 @@ Poly PolySub(const Poly *p, const Poly *q) {
     return result;
 }
 
-poly_exp_t PolyDegBy(const Poly *p, size_t var_idx) {
+poly_exp_t PolyDegBy(const Poly *p, size_t varIdx) {
     assert(isSorted(p));
 
     if (PolyIsZero(p))
@@ -530,12 +525,12 @@ poly_exp_t PolyDegBy(const Poly *p, size_t var_idx) {
     if (PolyIsCoeff(p))
         return 0;
 
-    if (var_idx == 0)
+    if (varIdx == 0)
         return p->arr[0].exp;
 
     poly_exp_t maxExp = 0;
     for (size_t i = 0; i < p->size; i++)
-        maxExp = maxOfExp(PolyDegBy(&p->arr[i].p, var_idx - 1), maxExp);
+        maxExp = maxOfExp(PolyDegBy(&p->arr[i].p, varIdx - 1), maxExp);
 
     return maxExp;
 }
