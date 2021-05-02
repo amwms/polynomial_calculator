@@ -6,11 +6,21 @@
 
 #include <stdio.h>
 //MEMORY_C
+/**
+ * Sprawdza czy skończya się pamięć.
+ * @param[in] ptr : pionter na miejsce w pamięci
+ * @return
+ */
 void error(void *ptr) {
     if (ptr == NULL)
         exit(1);
 }
 
+/**
+ * Mallocuje blok pamięci sprawdzając czy nie skończyła się pamięć.
+ * @param[in] size : rozmiar pamięci, który chcemy zaallocować
+ * @return miejsce zaalocowanej pamięci
+ */
 void* safeMalloc(size_t size) {
     void *ptr = (void *) malloc(size);
 
@@ -19,6 +29,11 @@ void* safeMalloc(size_t size) {
     return ptr;
 }
 
+/**
+ * Reallocuje blok pamięci sprawdzając czy nie skończyła się pamięć.
+ * @param[in] size : rozmiar pamięci, który chcemy zaallocować
+ * @return miejsce zaalocowanej pamięci
+ */
 void* safeRealloc(void *point, size_t size) {
     void *ptr = (void *) realloc(point, size);
 
@@ -28,35 +43,63 @@ void* safeRealloc(void *point, size_t size) {
 }
 
 //POLYMATH_C
-
+/**
+ * Sprawdza ile jest równych wykładników wśród wszystkich jednomianów w tablicy.
+ * @param[in] count : liczba jednomianów
+ * @param[in] monos : tablica jednomianów
+ * @return liczba równych wykładników
+ */
 size_t howManyDiffExp(size_t count, Mono monos[]) {
     size_t diff = 1;
 
     for (size_t i = 1; i < count; i++) {
-        // if (!PolyIsZero(&monos[i].p)) {
+        if (!PolyIsZero(&monos[i].p)) {
             if (monos[i].exp != monos[i - 1].exp)
                 diff++;
-        // }
+        }
     }
 
     return diff;
 }
 
+/**
+ * Porównuje dwa jednomiany po wykładniku.
+ * @param[in] a : jednomian
+ * @param[in] b : jednomian
+ * @return różnica wykładników jednomianów
+ */
 int compareMonosByExp(Mono *a, Mono *b) {
     return a->exp - b->exp;
 }
 
+/**
+ * Porównuje dwa wykładniki.
+ * @param[in] a : wykładnik
+ * @param[in] b : wykładnik
+ * @return większy wykładnik
+ */
 poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
     return a < b ? b : a;
 }
 
+/**
+ * Dodaje dwa wielomiany które są współczynnikikami.
+ * @param[in] p : wielomian (współczynnik) @f$p@f$
+ * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @return @f$p + q@f$
+ */
 Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
     poly_coeff_t value = p->coeff + q->coeff;
-    // printf("VALUE OF COEFF: %d \n", value);
 
     return PolyFromCoeff(value);
 }
 
+/**
+ * Dodaje dwa wielomiany - wielomian (nie będący współczynnikiem) i wpółczynnik.
+ * @param[in] p : wielomian @f$p@f$
+ * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @return @f$p + q@f$
+ */
 Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
     size_t size = p->size;
 
@@ -72,23 +115,14 @@ Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
         result.size++;
         result.arr[size] = MonoFromPoly(q, 0);
 
-        //DEBUG
-        // printf("COEF ADD COEFF DEBUG: \n");
-        // for(int i = 0; i < size+1; i++){
-        //     printf("%ld ", result.arr[i].p.coeff);
-        // }
-
         return result;
     }
-
 
     //przypadek że istnieje czynnik x_0^0(...)
     Poly result = PolyClone(p);
     Poly res = PolyAdd(&p->arr[size - 1].p, q);
 
-    //MEMORY!!!!!!!!!!!
     PolyDestroy(&result.arr[size - 1].p);
-
     result.arr[size - 1].p = res;
 
     if (PolyIsZero(&res)) {
@@ -97,60 +131,20 @@ Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
     }
 
     if (result.size == 0) {
-        //MEMORY
         PolyDestroy(&result);
 
         return PolyZero();
     }
 
     return result;
-
-
-    // if (PolyIsCoeff(&p->arr[size - 1].p)) {
-    //     int res = p->arr[size - 1].p.coeff + q->coeff;
-    //
-    //     //jeśli ostanti składnik to 0 - zbijamy
-    //     if (res == 0) {
-    //         Poly result = PolyCreate(size - 1);
-    //
-    //         for(int i = 0; i < size - 2; i++) {
-    //             result.arr[i] = MonoClone(&p->arr[i]);
-    //         }
-    //
-    //         return result;
-    //     }
-    //
-    //     Poly result = PolyClone(p);
-    //     result.arr[size - 1].p.coeff = res;
-    //
-    //     return result;
-    // }
-
-///NOWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    // printf("AAAAAAAAAAAAAAAAA\n" );
-    // Poly res = NonCoeffAddCoeff(&p->arr[size - 1].p, q);
-    //
-    // //jeśli ostanti składnik to 0 - zbijamy
-    // if (PolyIsZero(&res)) {
-    //     Poly result = PolyCreate(size - 1);
-    //
-    //     for(int i = 0; i < size - 2; i++) {
-    //         result.arr[i] = MonoClone(&p->arr[i]);
-    //     }
-    //
-    //     return result;
-    // }
-    //
-    // Poly result = PolyClone(p);
-    // result.arr[size - 1].p = res;
-    //
-    // return result;
-
-//STAREEEEEEEEEEEEEEE
-    // return NonCoeffAddCoeff(&p->arr[size - 1].p, q);
 }
 
-//TODO
+/**
+ * Dodaje dwa wielomiany, które nie są współczynnikami.
+ * @param[in] p : wielomian @f$p@f$
+ * @param[in] q : wielomian @f$q@f$
+ * @return @f$p + q@f$
+ */
 Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
     size_t size = p->size + q->size;
     Mono *monos = safeMalloc(sizeof(Mono) * size);
@@ -165,8 +159,6 @@ Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
         }
     }
 
-    // printf("NONCOEFNONCOEFFNONCOEFF\n");
-
     //MEMPORY
     // return PolyAddMonos(size, monos);
     Poly result = PolyAddMonos(size, monos);
@@ -175,17 +167,27 @@ Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
     return result;
 }
 
+/**
+ * Mnoży dwa wielomiany które są współczynnikikami.
+ * @param[in] p : wielomian (współczynnik) @f$p@f$
+ * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @return @f$p \cdot q@f$
+ */
 Poly CoeffMulCoeff(const Poly *p, const Poly *q) {
     poly_coeff_t value = p->coeff * q->coeff;
 
     return PolyFromCoeff(value);
 }
 
+/**
+ * Mnoży dwa wielomiany - wielomian (nie będący współczynnikiem) i wpółczynnik.
+ * @param[in] p : wielomian @f$p@f$
+ * @param[in] q : wielomian (współczynnik) @f$q@f$
+ * @return @f$p \cdot q@f$
+ */
 Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
     if (PolyIsZero(q))
         return PolyZero();
-
-    // printf("%zu\n", p->size);
 
     size_t size = p->size;
     Poly result = PolyCreate(size);
@@ -194,15 +196,6 @@ Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
     size_t id = 0;
     for (size_t i = 0; i < size; i++) {
         Poly poly = PolyMul(&p->arr[i].p, q);
-
-
-        // if (PolyIsCoeff(&p->arr[i].p))
-        //     poly = CoeffMulCoeff(&p->arr[i].p, q);
-        // else
-        //     poly = NonCoeffMulCoeff(&p->arr[i].p, q);
-
-        // printf("AAAAAAAA\n");
-        // fflush(stdout);
 
         if (PolyIsZero(&poly)) {
             PolyDestroy(&poly);
@@ -237,6 +230,12 @@ Poly NonCoeffMulCoeff(const Poly *p, const Poly *q) {
     return result;
 }
 
+/**
+ * Mnoy dwa wielomiany, które nie są współczynnikami.
+ * @param[in] p : wielomian @f$p@f$
+ * @param[in] q : wielomian @f$q@f$
+ * @return @f$p \cdot q@f$
+ */
 Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
     size_t size = p->size * q->size;
     Mono *multi = safeMalloc(sizeof(Mono) * size);
@@ -259,6 +258,12 @@ Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
     return result;
 }
 
+/**
+ * Podnosi a do potęgi x.
+ * @param[in] a : podstawa
+ * @param[in] q : wykładnik
+ * @return @f$ a^x @f$
+ */
 poly_coeff_t power(poly_coeff_t a, poly_exp_t x) {
     if (x == 0)
         return (poly_coeff_t) 1;
@@ -312,9 +317,8 @@ Poly PolyCreate(size_t size) {
 }
 
 void PolyDestroy(Poly *p) {
-    if (p->arr == NULL){
+    if (p->arr == NULL)
         return;
-    }
 
     for (size_t i = 0; i < p->size; i++) {
         MonoDestroy(&p->arr[i]);
@@ -327,17 +331,15 @@ Poly PolyClone(const Poly *p) {
     if (PolyIsCoeff(p))
         return (Poly) {.coeff = p->coeff, .arr = NULL};
 
-    // printf("WSKAŹNIK: %p\n", p);
     Poly p2 = *p;
 
     // p2.arr = safeMalloc(sizeof(&(p->arr)));
     p2.arr = safeMalloc(sizeof(Mono) * p->size);
 
-    // printf("P_SIZE_BEFORE: %zu \n", p->size);
     for (size_t i = 0; i < p->size; i++) {
         p2.arr[i] = MonoClone(&p->arr[i]);
     }
-    // printf("P_SIZE_AFTER: %zu \n", p->size);
+
     return p2;
 }
 
@@ -351,14 +353,13 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
         if (PolyIsCoeff(q)) {
             return CoeffAddCoeff(p, q);
         }
-        // printf("SHOULD BE HERE\n");
+
         return NonCoeffAddCoeff(q, p);
     }
 
     if (PolyIsCoeff(q))
         return NonCoeffAddCoeff(p, q);
 
-    // printf("AAAAAAAAAAAAAAAAAAAAA");
     return NonCoeffAddNonCoeff(p, q);
 }
 
@@ -369,17 +370,14 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
     //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
     if (count == 1) {
         if (PolyIsCoeff(&monos[0].p) && monos[0].exp == 0) {
-            //MEMORY!!!!!!!!!!!!!!!
             poly_coeff_t coeffFinal = myMonos[0].p.coeff;
             free(myMonos);
 
             return PolyFromCoeff(coeffFinal);
         }
-        // return (Poly) {.size = 1, .arr = myMonos};
     }
 
     if (count < 1) {
-        //MEMORY
         free(myMonos);
 
         return PolyZero();
@@ -387,65 +385,40 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
 
     size_t diffExps = howManyDiffExp(count, myMonos);
     Poly result = PolyCreate(diffExps);
-    // Poly helper = PolyClone(&myMonos[0].p);
     Poly helper = myMonos[0].p;
     poly_exp_t helper_exp = myMonos[0].exp;
     size_t result_id = 0;
 
 
     // idziemy po kolei i sprawdzamy czy sąsiednie wykładniki czy są równe jeśli nie
-    // to wstawiamy ja tak to robimy poly PolyAdd
+    // to wstawiamy do result, jak tak to robimy poly PolyAdd i nie wstawiamy
     for (size_t i = 1; i < count; i++) {
-
         //NWM CO TU POWINNO BYĆ BO CHYBA POTEM TO SPRAWDZAM DOPIERO JAK PRZEPISUJE
-        // if (PolyIsZero(&myMonos[i].p))
-        //     continue;
+        if (PolyIsZero(&myMonos[i].p))
+            continue;
 
-        //DEBUUUUUUUUUUUUUUUUUUUUUUGGGGGGGGGGGGGGGGG
-        // printf("POLY ADD MONOS EXP COMPARE: %d %d\n", myMonos[i-1].exp, myMonos[i].exp);
         if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
-            //PAMIEC!!!!!!!!!!!!!!!
-            // helper = PolyAdd(&helper, &myMonos[i].p);
-
             Poly pom = PolyAdd(&helper, &myMonos[i].p);
             PolyDestroy(&helper);
             PolyDestroy(&myMonos[i].p);
             helper = pom;
-
-            // printf("WORKED THIS IS HELPER:\n");
 
             continue;
         }
 
         result.arr[result_id] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
 
-        //PAMIEC!!!!!!!!!!!!!!!
-        //zmieniamy wartość helper więc trzeba zrobic free
         PolyDestroy(&helper);
-
-        // helper = PolyClone(&myMonos[i].p);
         helper = myMonos[i].p;
         helper_exp = myMonos[i].exp;
         result_id++;
     }
 
-
-    // printf("THIS IS RESULT_ID: %d\n", result_id);
-    // printf("THIS IS DIFFEXP: %d\n", diffExps);
-    if (result_id < diffExps /*- 1*/) {
+    if (result_id < diffExps)
         result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helper_exp};
-    }
 
-    //PAMIEC!!!!!!!!!!!!!!!
     PolyDestroy(&helper);
 
-    //NA RAZIE W INNYM MIEJSCU
-    //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
-    // if (PolyIsCoeff(&result.arr[0].p) && diffExps == 1 && result.arr[0].exp == 0)
-    //     return PolyFromCoeff(result.arr[0].p.coeff);
-
-
-        //NOWEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     //przepisujemy tak żeby nie było wśród współczynników zer i żeby wielomian się zgadzał rozmiarem
     size_t zeros = 0;
     for (size_t i = 0; i < diffExps; i++) {
@@ -453,11 +426,9 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
             zeros++;
     }
 
-    // printf("ZEROS:%d\n", zeros);
-    // printf("DIFF:%d\n", diffExps);
     Poly resultFinal = PolyCreate(diffExps - zeros);
 
-    //tworzymy resultFinal za pomoca PŁYTKIEJ kopii result
+    //tworzymy resultFinal za pomocą PŁYTKIEJ kopii result
     if (!PolyIsCoeff(&resultFinal)) {
         size_t id = 0;
         for(size_t i = 0; i < diffExps; i++) {
@@ -467,21 +438,18 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
             }
         }
 
-        //jeśli wieloian jest współczynnikiem "zbijamy go" zwracamy współczynnik
+        //jeśli wielomian jest współczynnikiem "zbijamy go" zwracamy współczynnik
         if (resultFinal.size == 1 && PolyIsCoeff(&resultFinal.arr[0].p) && resultFinal.arr[0].exp == 0) {
-            //MEMORY!!!!!!!!!!!
             poly_coeff_t coeffFinal = resultFinal.arr[0].p.coeff;
             PolyDestroy(&resultFinal);
             free(result.arr);
             free(myMonos);
 
-            // return PolyFromCoeff(resultFinal.arr[0].p.coeff);
             return PolyFromCoeff(coeffFinal);
         }
     }
 
-    // PolyDestroy(&result);
-    //myMonos i result skopiowaliśmy do wyniku za pomoca PŁYTKIEJ kopii
+    //myMonos i result skopiowaliśmy do wyniku za pomoca PŁYTKIEJ kopii dlatego wystarczy tylko free()
     free(myMonos);
     free(result.arr);
 
@@ -507,7 +475,6 @@ Poly PolyMul(const Poly *p, const Poly *q) {
     return NonCoeffMulNonCoeff(p, q);
 }
 
-//GOOD TODO
 Poly PolyNeg(const Poly *p) {
     Poly p_neg = {.coeff = (-1), .arr = NULL};
     Poly result = PolyMul(p, &p_neg);
@@ -517,7 +484,6 @@ Poly PolyNeg(const Poly *p) {
     return result;
 }
 
-//GOOD TODO
 Poly PolySub(const Poly *p, const Poly *q) {
     Poly q_neg = PolyNeg(q);
 
@@ -571,7 +537,6 @@ bool PolyIsEq(const Poly *p, const Poly *q) {
         return false;
 
     for (size_t i = 0; i < p->size; i++) {
-        // printf("EXP1:%d  EXP2:%d \n", p->arr[i].exp, q->arr[i].exp);
 
         if (p->arr[i].exp == q->arr[i].exp) {
             if (!PolyIsEq(&p->arr[i].p, &q->arr[i].p))
@@ -594,7 +559,6 @@ Poly PolyAt(const Poly *p, poly_coeff_t x) {
 
     for (size_t i = 0; i < size; i++) {
         Poly q = PolyFromCoeff(power(x, p->arr[i].exp));
-
         Poly value = PolyMul(&p->arr[i].p, &q);
 
         monosResult[i] = MonoFromPoly(&value, 0);
@@ -603,16 +567,13 @@ Poly PolyAt(const Poly *p, poly_coeff_t x) {
     }
 
     Poly result = PolyAddMonos(size, monosResult);
-
     free(monosResult);
 
-    if (PolyIsCoeff(&result)) {
+    if (PolyIsCoeff(&result))
         return result;
-    }
 
     Poly resultFinal = result.arr[0].p;
     free(result.arr);
 
     return resultFinal;
 }
-
