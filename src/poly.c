@@ -8,43 +8,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "memory.h"
 #include "poly.h"
-
-/**
- * Sprawdza czy skończya się pamięć.
- * @param[in] ptr : pionter na miejsce w pamięci
- */
-static void error(void *ptr) {
-    if (ptr == NULL)
-        exit(1);
-}
-
-/**
- * Mallocuje blok pamięci sprawdzając czy nie skończyła się pamięć.
- * @param[in] size : rozmiar pamięci, który chcemy zaallocować
- * @return miejsce zaalocowanej pamięci
- */
-static void* safeMalloc(size_t size) {
-    void *ptr = (void *) malloc(size);
-
-    error(ptr);
-
-    return ptr;
-}
-
-/**
- * Reallocuje blok pamięci sprawdzając czy nie skończyła się pamięć.
- * @param[in] size : rozmiar pamięci, który chcemy zaallocować
- * @param[in] point : miejsce w pamięci gdzie chcemy allocować
- * @return miejsce zaalocowanej pamięci
- */
-static void* safeRealloc(void *point, size_t size) {
-    void *ptr = (void *) realloc(point, size);
-
-    error(ptr);
-
-    return ptr;
-}
 
 /**
 * Sprawdza czy jednomiany w wielomianie są posortowane malejąco po wykładnikach
