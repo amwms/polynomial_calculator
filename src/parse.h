@@ -20,6 +20,8 @@ void printMono(Mono *mono);
 
 void printPoly(Poly *poly);
 
+bool isDigit(char c);
+
 bool isParseNumberLL(char **str, long long *number);
 
 bool isParseNumberULL(char **str, unsigned long long *number);
@@ -31,5 +33,7 @@ bool isParseMono(char **str, Mono *mono);
 bool isParsePoly(char **str, Poly *poly);
 
 bool isParseVerse(char **str, Poly *poly);
+
+void parseVerse(char **str, Stack  *stack, int nr);
 
 #endif

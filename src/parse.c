@@ -13,6 +13,7 @@
 #include "poly.h"
 #include "parse.h"
 
+//TODO - PRINT FORM END TO BEGINING OF MONOS ARRAY
 void printMono(Mono *mono) {
     printf("(");
     printPoly(&mono->p);
@@ -111,7 +112,7 @@ bool isParseMono(char **str, Mono *mono) {
                 (*str)++;
                 unsigned long long exp;
                 if (**str != '\0' && isParseNumberULL(str, &exp)) {
-                    if (exp >= 0 && exp <= INT_MAX) {
+                    if (exp >= 0 && exp <= INT_MAX) { // checking if range of exp is correct
                         mono->exp = (poly_exp_t) exp;
                         if (**str == ')') {
                             (*str)++;
@@ -126,7 +127,7 @@ bool isParseMono(char **str, Mono *mono) {
     return false;
 }
 
-void dynamicAddToMonos(size_t *free, size_t *used, Mono *monos, Mono addMono) {
+static void dynamicAddToMonos(size_t *free, size_t *used, Mono *monos, Mono addMono) {
     if (*free == 0) {
         monos = (Mono*) safeRealloc((monos), sizeof(Mono) * *used * 2);
         *free = *used;
@@ -177,4 +178,16 @@ bool isParseVerse(char **str, Poly *poly) {
     }
 
     return false;
+}
+
+void parseVerse(char **str, Stack  *stack, int nr) {
+    Poly poly;
+    if (isParsePoly(str, &poly)) {
+        addStack(stack, poly);
+        printPoly(&poly);
+        printf("\n");
+        return;
+    }
+
+    fprintf(stderr, "ERROR %d WRONG POLY\n", nr);
 }
