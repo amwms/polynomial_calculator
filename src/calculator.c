@@ -23,7 +23,7 @@ bool hasPrefix(char **str, char *template) {
 
         (*str)++;
     }
-
+//    printf("%s\n", template);
     return true;
 }
 
@@ -73,6 +73,9 @@ void ADD(Stack *stack, int nr) {
     Poly p = removeStack(stack);
     Poly q = removeStack(stack);
     addStack(stack, PolyAdd(&p, &q));
+
+    PolyDestroy(&p);
+    PolyDestroy(&q);
 }
 
 void MUL(Stack *stack, int nr) {
@@ -84,6 +87,9 @@ void MUL(Stack *stack, int nr) {
     Poly p = removeStack(stack);
     Poly q = removeStack(stack);
     addStack(stack, PolyMul(&p, &q));
+
+    PolyDestroy(&p);
+    PolyDestroy(&q);
 }
 
 void NEG(Stack *stack, int nr) {
@@ -92,7 +98,11 @@ void NEG(Stack *stack, int nr) {
         return;
     }
 
-    PolyNeg(&stack->polys[stack->sizeUsed - 1]);
+    Poly p = PolyNeg(getFirstFromStack(stack));
+    Poly toRemove = removeStack(stack);
+    addStack(stack, p);
+
+    PolyDestroy(&toRemove);
 }
 
 void SUB(Stack *stack, int nr) {
@@ -104,6 +114,9 @@ void SUB(Stack *stack, int nr) {
     Poly p = removeStack(stack);
     Poly q = removeStack(stack);
     addStack(stack, PolySub(&p, &q));
+
+    PolyDestroy(&p);
+    PolyDestroy(&q);
 }
 
 void IS_EQ(Stack *stack, int nr) {
@@ -140,8 +153,10 @@ void AT(Stack *stack, poly_coeff_t x, int nr) {
     }
 
     Poly p = PolyAt(getFirstFromStack(stack), x);
-    removeStack(stack);
+    Poly toRemove = removeStack(stack);
     addStack(stack, p);
+
+    PolyDestroy(&toRemove);
 }
 
 void PRINT(Stack *stack, int nr) {
@@ -160,7 +175,8 @@ void POP(Stack *stack, int nr) {
         return;
     }
 
-    removeStack(stack);
+    Poly toRemove = removeStack(stack);
+    PolyDestroy(&toRemove);
 }
 
 void parseAndDoOperation(Stack *stack, char **verse, int nr) {
@@ -200,23 +216,30 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
         IS_EQ(stack, nr);
 //        return;
     }
+    else if (hasPrefix(verse, "DEG_BY")) {
+        if (**verse == ' ') {
+            (*verse)++;
+            unsigned long long idx;
+            if (isParseNumberULL(verse, &idx) && **verse == '\0') {
+                DEG_BY(stack, idx, nr);
+//            printf("dziala\n");
+                return;
+            }
+        }
+        fprintf(stderr, "ERROR %d DEG BY WRONG VARIABLE\n", nr);
+    }
     else if (hasPrefix(verse, "DEG") && **verse == '\0') {
         DEG(stack, nr);
 //        return;
     }
-    else if (hasPrefix(verse, "DEG_BY ")) {
-        unsigned long long idx;
-        if (isParseNumberULL(verse, &idx) && **verse == '\0') {
-            DEG_BY(stack, idx, nr);
-//            return;
-        }
-        fprintf(stderr, "ERROR %d DEG BY WRONG VARIABLE\n", nr);
-    }
-    else if (hasPrefix(verse, "AT ")) {
-        long long x;
-        if (isParseNumberLL(verse, &x) && **verse == '\0') {
-            AT(stack, x, nr);
-//            return;
+    else if (hasPrefix(verse, "AT")) {
+        if (**verse == ' ') {
+            (*verse)++;
+            long long x;
+            if (isParseNumberLL(verse, &x) && **verse == '\0') {
+                AT(stack, x, nr);
+                return;
+            }
         }
         fprintf(stderr, "ERROR %d AT WRONG VALUE\n", nr);
     }

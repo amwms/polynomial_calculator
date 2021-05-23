@@ -35,7 +35,7 @@ Poly removeStack(Stack *stack) {
     stack->sizeUsed -= 1;
     stack->sizeFree += 1;
 
-    if (stack->sizeUsed <= stack->sizeFree) {
+    if (stack->sizeUsed <= stack->sizeFree && stack->sizeUsed + stack->sizeFree > INITIAL_STACK_SIZE) {
         stack->polys = (Poly*) safeRealloc(stack->polys, sizeof(Poly) * (stack->sizeUsed + stack->sizeFree) / 2);
         stack->sizeFree = (stack->sizeUsed + stack->sizeFree) / 2 - stack->sizeUsed;
     }

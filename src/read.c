@@ -43,7 +43,7 @@ int readLine(char **verse, int *len, int *allocedVerseMemory) {
 bool isWhitespace (char c) {
     char *signs = " \0\t\n\v\f\r";
 
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 7; i++) {
         if (c == signs[i])
             return 1;
     }
@@ -56,12 +56,12 @@ bool isWhitespace (char c) {
  * -char *verse -> a string
  * Replacing all the whitespaces except ' ' in the [verse] with '@'
 */
-void replaceSpaces(char *verse) {
-    int size = strlen(verse);
+void replaceSpaces(char **verse) {
+    size_t size = strlen(*verse);
 
-    for (int i = 0; i < size; i++) {
-        if (isWhitespace(verse[i]) && verse[i] != ' ')
-            verse[i] = '@';
+    for (size_t i = 0; i < size; i++) {
+        if (isWhitespace(*verse[i]) && *verse[i] != ' ')
+            *verse[i] = '@';
     }
 }
 
@@ -78,10 +78,15 @@ int isCorrectLine(char *verse, int size) {
     return 1;
 }
 
+//should emtpy be only when it is only enter in line
+//int isEmptyLine(char *verse, int size) {
+//    for (int i = 0; i < size - 1; i++) {
+//        if (!(isWhitespace(verse[i])))
+//            return 0;
+//    }
+//    return 1;
+//}
+
 int isEmptyLine(char *verse, int size) {
-    for (int i = 0; i < size - 1; i++) {
-        if (!(isWhitespace(verse[i])))
-            return 0;
-    }
-    return 1;
+    return verse[0] == '\0';
 }

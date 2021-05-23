@@ -14,6 +14,14 @@
 #include "parse.h"
 
 //TODO - PRINT FORM END TO BEGINING OF MONOS ARRAY
+void freeMemoryUsedForMonos(Mono *monos, size_t used) {
+    for (size_t i = 0; i < used; i++) {
+        MonoDestroy(&monos[i]);
+    }
+
+    free(monos);
+}
+
 void printMono(Mono *mono) {
     printf("(");
     printPoly(&mono->p);
@@ -26,12 +34,13 @@ void printPoly(Poly *poly) {
         return;
     }
 
-    for (size_t i = 0; i < poly->size; i++) {
-        printMono(&poly->arr[i]);
+    for (size_t i = poly->size; i > 0; i--) {
+        printMono(&poly->arr[i - 1]);
 
-        if (i < poly->size - 1)
+        if (i > 1)
             printf("+");
     }
+
 }
 
 bool isDigit(char c) {
@@ -102,10 +111,11 @@ bool isParseCoeff(char **str, Poly *p) {
 }
 
 bool isParseMono(char **str, Mono *mono) {
+    Poly p = PolyZero();
+
     if (**str == '(') {
         (*str)++;
 
-        Poly p;
         if (**str != '\0' && isParsePoly(str, &p)) {
             mono->p = p;
             if (**str == ',') {
@@ -124,16 +134,18 @@ bool isParseMono(char **str, Mono *mono) {
         }
     }
 
+    PolyDestroy(&p);
     return false;
 }
 
-static void dynamicAddToMonos(size_t *free, size_t *used, Mono *monos, Mono addMono) {
+static void dynamicAddToMonos(size_t *free, size_t *used, Mono **monos, Mono addMono) {
+//    printf("BEFORE USED: %zu, FREE: %zu\n", *used, *free);
     if (*free == 0) {
-        monos = (Mono*) safeRealloc((monos), sizeof(Mono) * *used * 2);
+        *monos = (Mono*) safeRealloc(*monos, sizeof(Mono) * (*used) * 2);
         *free = *used;
     }
-
-    monos[(*used)++] = addMono;
+    (*monos)[(*used)++] = addMono;
+//    printf("AFTER USED: %zu, FREE: %zu\n", *used, *free);
     (*free)--;
 }
 
@@ -147,27 +159,31 @@ bool isParsePoly(char **str, Poly *poly) {
 //    printf("%c   ", **str);
     Mono mono;
     Mono *monos = (Mono*) safeMalloc(sizeof (Mono) * 4);
-    size_t used = 0;
-    size_t free = 4;
+    size_t usedSpace = 0;
+    size_t freeSpace = 4;
 
     if (**str != '\0' && isParseMono(str, &mono)) {
-        dynamicAddToMonos(&free, &used, monos, mono);
+        dynamicAddToMonos(&freeSpace, &usedSpace, &monos, mono);
 
         while (**str == '+') {
             (*str)++;
 //            printf("%c   ", **str);
-            if (!(**str != '\0' && isParseMono(str, &mono)))
+            if (!(**str != '\0' && isParseMono(str, &mono))) {
+                freeMemoryUsedForMonos(monos, usedSpace);
                 return false;
+            }
 //            printMono(&mono);
-            dynamicAddToMonos(&free, &used, monos, mono);
+            dynamicAddToMonos(&freeSpace, &usedSpace, &monos, mono);
         }
 
-        monos = (Mono*) safeRealloc(monos, sizeof(Mono) * used);
-        *poly = PolyAddMonos(used, monos);
+        monos = (Mono*) safeRealloc(monos, sizeof(Mono) * usedSpace);
+        *poly = PolyAddMonos(usedSpace, monos);
+        free(monos);
 
         return true;
     }
 
+    freeMemoryUsedForMonos(monos, usedSpace);
     return false;
 }
 
@@ -181,13 +197,15 @@ bool isParseVerse(char **str, Poly *poly) {
 }
 
 void parseVerse(char **str, Stack  *stack, int nr) {
-    Poly poly;
-    if (isParsePoly(str, &poly)) {
+    Poly poly = PolyZero();
+//    if (isParsePoly(str, &poly) && (**str) == '\0') { //making change - also check if it is the end of the line
+    if (isParseVerse(str, &poly)) {
         addStack(stack, poly);
-        printPoly(&poly);
-        printf("\n");
+//        printPoly(&poly);
+//        printf("\n");
         return;
     }
 
+    PolyDestroy(&poly);
     fprintf(stderr, "ERROR %d WRONG POLY\n", nr);
 }

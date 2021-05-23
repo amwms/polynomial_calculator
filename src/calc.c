@@ -20,12 +20,39 @@ int main() {
     Stack *stack = createStack();
 
     while (readLine(&verse, &len, &allocedVerseMemory)) {
-        if (!isComment(verse, len) || !isEmptyLine(verse, len)) {
-            if (verse[0] == '(' || isDigit(verse[0])) {
-                parseVerse(&verse, stack, count);
+        char *str = verse;
+//        replaceSpaces(&str);
+        size_t size = strlen(str);
+
+        for (size_t i = 0; i < size; i++) {
+            if (isWhitespace(str[i]) && str[i] != ' ')
+                str[i] = '@';
+        }
+
+
+//        printf("%s\n", str);
+//TODO-COS NIE DZIAŁA
+//        printf("%d, %d\n", isComment(verse, len), isEmptyLine(verse, len));
+//        if (!isComment(verse, len) && !isEmptyLine(verse, len)) {
+//            if (verse[0] == '(' || isDigit(verse[0]) || verse[0] == '-') {
+//                parseVerse(&str, stack, count);
+//            }
+//            else {
+//                parseAndDoOperation(stack, &str, count);
+//            }
+//        }
+
+//correction - always check for poly if firts sign in verse is not a letter
+//        if (count == 66) {
+//            printf("SIZE: %d, VERSE:\"%s\"\n", len, verse);
+//            printf("is empty: %d\n", isEmptyLine(verse, len));
+//        }
+        if (!isComment(verse, len) && !isEmptyLine(verse, len)) {
+            if ((verse[0] >= 'A' && verse[0] <= 'Z') || (verse[0] >= 'a' && verse[0] <= 'z')) {
+                parseAndDoOperation(stack, &str, count);
             }
             else {
-                parseAndDoOperation(stack, &verse, count);
+                parseVerse(&str, stack, count);
             }
         }
 
@@ -54,5 +81,11 @@ int main() {
 //        count++;
 //    }
 
+    for(int i = 0; i < stack->sizeUsed; i++) {
+        PolyDestroy(&stack->polys[i]);
+    }
+    free(verse);
+    free(stack->polys);
+    free(stack);
 
 }

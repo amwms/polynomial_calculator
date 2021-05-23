@@ -15,6 +15,15 @@ int readLine(char **verse, int *len, int *allocedVerseMemory);
 /**
  * Arguments:
  * -char *verse -> a string
+ * Replacing all the whitespaces except ' ' in the [verse] with '@'
+*/
+void replaceSpaces(char **verse);
+
+bool isWhitespace (char c);
+
+/**
+ * Arguments:
+ * -char *verse -> a string
  * -int size -> length of [verse]
  * This function tells whether [verse] is a comment or not.
  */
