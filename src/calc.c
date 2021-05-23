@@ -22,9 +22,9 @@ int main() {
     while (readLine(&verse, &len, &allocedVerseMemory)) {
         char *str = verse;
 //        replaceSpaces(&str);
-        size_t size = strlen(str);
+//        size_t size = strlen(str);
 
-        for (size_t i = 0; i < size; i++) {
+        for (size_t i = 0; i < len - 1; i++) {
             if (isWhitespace(str[i]) && str[i] != ' ')
                 str[i] = '@';
         }
@@ -44,7 +44,7 @@ int main() {
 
 //correction - always check for poly if firts sign in verse is not a letter
 //        if (count == 66) {
-//            printf("SIZE: %d, VERSE:\"%s\"\n", len, verse);
+//            printf("SIZE: %d, VERSE:\"%s\"\n", len, str);
 //            printf("is empty: %d\n", isEmptyLine(verse, len));
 //        }
         if (!isComment(verse, len) && !isEmptyLine(verse, len)) {

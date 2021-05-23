@@ -28,11 +28,6 @@ bool hasPrefix(char **str, char *template) {
 }
 
 void ZERO(Stack *stack, int nr) {
-    if (isEmptyStack(stack)) {
-        fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
-        return;
-    }
-
     addStack(stack, PolyZero());
 }
 
