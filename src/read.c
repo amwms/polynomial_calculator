@@ -4,7 +4,6 @@
   @author Anna Stawiska <as429600@students.mimuw.edu.pl>
   @date 24/05/2021
 */
-
 #include <stdio.h>
 #include "memory.h"
 #include "read.h"
@@ -57,7 +56,6 @@ bool isWhitespace (char c) {
 
     return 0;
 }
-
 
 int isComment(char *verse, int size) {
     return (size > 0 && verse[0] == '#');

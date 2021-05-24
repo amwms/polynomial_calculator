@@ -5,8 +5,8 @@
   @date 24/05/2021
 */
 
-#ifndef READ_H
-#define READ_H
+#ifndef __READ_H__
+#define __READ_H__
 
 #include "poly.h"
 

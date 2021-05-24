@@ -1,5 +1,8 @@
 /** @file
-  Stos
+  Stos.
+  Implementacja stosu za pomocą tablicy.
+  Gdy kończy się miejsce na tablicy aby dodać do niej elementy, rozszerzamy ją dwa razy.
+  Gdzy liczba elementów tablicy jest nie większa niż połowa jej wielkości zmieniamy jej rozmiar na połowę krótszy.
 
   @author Anna Stawiska <as429600@students.mimuw.edu.pl>
   @date 24/05/2021

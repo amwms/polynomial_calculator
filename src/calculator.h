@@ -5,8 +5,8 @@
   @date 20/05/2021
 */
 
-#ifndef POLYNOMIALS_CALCULATOR_H
-#define POLYNOMIALS_CALCULATOR_H
+#ifndef __CALCULATOR_H__
+#define __CALCULATOR_H__
 
 #include <stdbool.h>
 #include <string.h>
@@ -24,4 +24,4 @@
  */
 void parseAndDoOperation(Stack *stack, char **verse, int nr);
 
-#endif //POLYNOMIALS_CALCULATOR_H
+#endif

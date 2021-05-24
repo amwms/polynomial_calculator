@@ -47,5 +47,4 @@ int main() {
     free(stack->polys);
     free(stack);
     free(verse);
-
 }
