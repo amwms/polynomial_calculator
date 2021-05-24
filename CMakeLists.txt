@@ -33,8 +33,7 @@ set(SOURCE_FILES
     src/memory.c
     src/memory.h
     src/poly.c
-    src/poly.h
-    src/read.c )
+    src/poly.h )
 
 # Wskazujemy plik wykonywalny.
 add_executable(poly ${SOURCE_FILES})
