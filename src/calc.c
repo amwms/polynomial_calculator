@@ -31,12 +31,10 @@ int main() {
         }
 
         if (!isComment(verse, len) && !isEmptyLine(verse)) {
-            if ((verse[0] >= 'A' && verse[0] <= 'Z') || (verse[0] >= 'a' && verse[0] <= 'z')) {
+            if ((verse[0] >= 'A' && verse[0] <= 'Z') || (verse[0] >= 'a' && verse[0] <= 'z')) 
                 parseAndDoOperation(stack, &str, count);
-            }
-            else {
+            else
                 parseVerse(&str, stack, count);
-            }
         }
 
         count++;
