@@ -1,10 +1,10 @@
 /** @file
-  Implementacja stosu.
+  Implementacja kalkulatora na wielomianach.
 
   @author Anna Stawiska <as429600@students.mimuw.edu.pl>
-  @date 02/05/2021
+  @date 24/05/2021
 */
-#include <stdio.h>
+
 #include "poly.h"
 #include "memory.h"
 #include "read.h"
@@ -21,33 +21,14 @@ int main() {
 
     while (readLine(&verse, &len, &allocedVerseMemory)) {
         char *str = verse;
-//        replaceSpaces(&str);
-//        size_t size = strlen(str);
 
-        for (size_t i = 0; i < len - 1; i++) {
+        // zamiana wszytkich błaych znaków poza spacjami na '@'
+        for (int i = 0; i < len - 1; i++) {
             if (isWhitespace(str[i]) && str[i] != ' ')
                 str[i] = '@';
         }
 
-
-//        printf("%s\n", str);
-//TODO-COS NIE DZIAŁA
-//        printf("%d, %d\n", isComment(verse, len), isEmptyLine(verse, len));
-//        if (!isComment(verse, len) && !isEmptyLine(verse, len)) {
-//            if (verse[0] == '(' || isDigit(verse[0]) || verse[0] == '-') {
-//                parseVerse(&str, stack, count);
-//            }
-//            else {
-//                parseAndDoOperation(stack, &str, count);
-//            }
-//        }
-
-//correction - always check for poly if firts sign in verse is not a letter
-//        if (count == 66) {
-//            printf("SIZE: %d, VERSE:\"%s\"\n", len, str);
-//            printf("is empty: %d\n", isEmptyLine(verse, len));
-//        }
-        if (!isComment(verse, len) && !isEmptyLine(verse, len)) {
+        if (!isComment(verse, len) && !isEmptyLine(verse)) {
             if ((verse[0] >= 'A' && verse[0] <= 'Z') || (verse[0] >= 'a' && verse[0] <= 'z')) {
                 parseAndDoOperation(stack, &str, count);
             }
@@ -58,34 +39,11 @@ int main() {
 
         count++;
     }
-//    while (readLine(&verse, &len, &allocedVerseMemory)) {
-//        char *str = verse;
-////        printf("IS PARSED :%d \n", isParseNumberLL(&str, &count));
-////        printf("NUMBER: %lld \n", count);
-////        printf("HOW MUCH READ: %ld \n", str - verse);
-//
-//        printf("IS PARSED POLY:%d \n", isParseVerse(&str, &poly));
-//        printf("POLY: "); printPoly(&poly); printf("\n");
-//        printf("HOW MUCH READ: %ld \n", str - verse);
-//    }
-//        if(!(isComment(verse, len) || isCorrectLine(verse, len))) {
-//            if (verse[0] == '(')
-//                p = parsePoly(verse);
-//            else if (isNumber(verse))
-//                p= parseCoeff(verse);
-//            else
-//                printf("BŁAD");
-//        }
-//        printf("DHDGFHDGF");
-//
-//        count++;
-//    }
 
-    for(int i = 0; i < stack->sizeUsed; i++) {
+    for(int i = 0; i < stack->sizeUsed; i++)
         PolyDestroy(&stack->polys[i]);
-    }
-    free(verse);
     free(stack->polys);
     free(stack);
+    free(verse);
 
 }

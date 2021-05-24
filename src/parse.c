@@ -1,5 +1,5 @@
 /** @file
-  Implementacja stosu.
+  Implementacja parsowania wiersza potencjalnie zawierająca wielomian.
 
   @author Anna Stawiska <as429600@students.mimuw.edu.pl>
   @date 20/05/2021
@@ -13,7 +13,12 @@
 #include "poly.h"
 #include "parse.h"
 
-//TODO - PRINT FORM END TO BEGINING OF MONOS ARRAY
+/**
+ * Zwalnia pamięć użytą na tablicę elementów typu Mono.
+ * @param[in] monos : tablica jednomianów
+ * @param[in] used : liczba użytych miejsc w tablicy jednomianów
+ * @return
+*/
 void freeMemoryUsedForMonos(Mono *monos, size_t used) {
     for (size_t i = 0; i < used; i++) {
         MonoDestroy(&monos[i]);
@@ -22,6 +27,11 @@ void freeMemoryUsedForMonos(Mono *monos, size_t used) {
     free(monos);
 }
 
+/**
+ * Wypisuje jednomian.
+ * @param[in] mono : jednomian
+ * @return
+*/
 void printMono(Mono *mono) {
     printf("(");
     printPoly(&mono->p);
@@ -40,7 +50,6 @@ void printPoly(Poly *poly) {
         if (i > 1)
             printf("+");
     }
-
 }
 
 bool isDigit(char c) {
@@ -55,12 +64,6 @@ bool isParseNumberLL(char **str, long long *number) {
         isMinus = true;
         (*str)++;
     }
-
-//    if (*str[0] == '0') {
-//        *number = 0;
-//        (*str)++;
-//        return true;
-//    }
 
     if (isDigit(*str[0])) {
         errno = 0;
@@ -80,12 +83,6 @@ bool isParseNumberLL(char **str, long long *number) {
 bool isParseNumberULL(char **str, unsigned long long *number) {
     char *const begin = *str;
 
-//    if (*str[0] == '0') {
-//        *number = 0;
-//        (*str)++;
-//        return true;
-//    }
-
     if (isDigit(*str[0])) {
         errno = 0;
         *number = strtoull(*str, str, 10);
@@ -99,17 +96,14 @@ bool isParseNumberULL(char **str, unsigned long long *number) {
     return false;
 }
 
-bool isParseCoeff(char **str, Poly *p) {
-    long long nrLL = 0;
+static inline bool isParsePoly(char **verse, Poly *p);
 
-    if (isParseNumberLL(str, &nrLL)) {
-        *p = PolyFromCoeff(nrLL);
-        return true;
-    }
-
-    return false;
-}
-
+/**
+ * Parsowanie potencjalnego jednomianu.
+ * @param[in] str : wiersz
+ * @param[in] mono : jednomian
+ * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako jednomian.
+*/
 bool isParseMono(char **str, Mono *mono) {
     Poly p = PolyZero();
 
@@ -122,7 +116,7 @@ bool isParseMono(char **str, Mono *mono) {
                 (*str)++;
                 unsigned long long exp;
                 if (**str != '\0' && isParseNumberULL(str, &exp)) {
-                    if (exp >= 0 && exp <= INT_MAX) { // checking if range of exp is correct
+                    if (exp <= INT_MAX) { // sprawdzanie czy zakres exp jest poprawny
                         mono->exp = (poly_exp_t) exp;
                         if (**str == ')') {
                             (*str)++;
@@ -138,17 +132,29 @@ bool isParseMono(char **str, Mono *mono) {
     return false;
 }
 
+/**
+ * Dynamicznie rozszerza tablicę jednomianów (jeśli trzeba) i dodaje do niej jednomian.
+ * @param[in] free : ilość wolnego miejsca (w tablicy jednomianów)
+ * @param[in] used : ilość zużytego miejsca (w tablicy jednomianów)
+ * @param[in] monos : tablica jednomianów
+ * @param[in] addMono : jednomian, który chcemy dodać do tablicy
+ * @return
+*/
 static void dynamicAddToMonos(size_t *free, size_t *used, Mono **monos, Mono addMono) {
-//    printf("BEFORE USED: %zu, FREE: %zu\n", *used, *free);
     if (*free == 0) {
         *monos = (Mono*) safeRealloc(*monos, sizeof(Mono) * (*used) * 2);
         *free = *used;
     }
     (*monos)[(*used)++] = addMono;
-//    printf("AFTER USED: %zu, FREE: %zu\n", *used, *free);
     (*free)--;
 }
 
+/**
+ * Parsowanie potencjalnego wielomianu.
+ * @param[in] str : wiersz
+ * @param[in] poly : wielomian
+ * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako wielomian.
+*/
 bool isParsePoly(char **str, Poly *poly) {
     long long number;
 
@@ -156,7 +162,7 @@ bool isParsePoly(char **str, Poly *poly) {
         *poly = PolyFromCoeff(number);
         return true;
     }
-//    printf("%c   ", **str);
+
     Mono mono;
     Mono *monos = (Mono*) safeMalloc(sizeof (Mono) * 4);
     size_t usedSpace = 0;
@@ -167,12 +173,12 @@ bool isParsePoly(char **str, Poly *poly) {
 
         while (**str == '+') {
             (*str)++;
-//            printf("%c   ", **str);
+
             if (!(**str != '\0' && isParseMono(str, &mono))) {
                 freeMemoryUsedForMonos(monos, usedSpace);
                 return false;
             }
-//            printMono(&mono);
+
             dynamicAddToMonos(&freeSpace, &usedSpace, &monos, mono);
         }
 
@@ -187,6 +193,12 @@ bool isParsePoly(char **str, Poly *poly) {
     return false;
 }
 
+/**
+ * Parsowanie wiersza potencjalnie zawierającego wielomian.
+ * @param[in] str : wiersz
+ * @param[in] poly : wielomian
+ * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako wielomian.
+*/
 bool isParseVerse(char **str, Poly *poly) {
     if (isParsePoly(str, poly)) {
         if (**str == '\0')
@@ -198,11 +210,9 @@ bool isParseVerse(char **str, Poly *poly) {
 
 void parseVerse(char **str, Stack  *stack, int nr) {
     Poly poly = PolyZero();
-//    if (isParsePoly(str, &poly) && (**str) == '\0') { //making change - also check if it is the end of the line
+
     if (isParseVerse(str, &poly)) {
         addStack(stack, poly);
-//        printPoly(&poly);
-//        printf("\n");
         return;
     }
 

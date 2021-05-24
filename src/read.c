@@ -1,11 +1,23 @@
+/** @file
+  Implementacja wczytywania.
+
+  @author Anna Stawiska <as429600@students.mimuw.edu.pl>
+  @date 24/05/2021
+*/
+
 #include <stdio.h>
-#include <string.h>
 #include "memory.h"
-#include "parse.h"
 #include "read.h"
 
 /**
- * Adding [c] to dynamic array [verse] (array of chars)
+ * Dynamicznie rozszerza tablicę (jeśli trzeba) i dodaje do niej znak.
+ * @param[in] verse : wczytywany wiersz
+ * @param[in] free : ilość wolnego miejsca w wierszu (tablicy charów)
+ * @param[in] id : indeks
+ * @param[in] alloctedVerseMemory : allokowana pamięć na wiersz
+ * @param[in] c : wczytywany znak
+ * @param[in] ifAdd : czy dodawać znak bo jest ostatnim znakiem (dodatkowym dodawanym przez "nas" - '\0')
+ * @return
 */
 void dynamicAddToVerse(char **verse, int *free, int *id, int *allocedVerseMemory, char c, int ifAdd) {
     if (*free == 0) {
@@ -36,10 +48,6 @@ int readLine(char **verse, int *len, int *allocedVerseMemory) {
     return (!isEOF || id > 1);
 }
 
-/** Checking if the character c is a whitespace.
-* If the character c is a whitespace the function returns the value 1,
-* if not it returns the value 0.
-*/
 bool isWhitespace (char c) {
     char *signs = " \0\t\n\v\f\r";
 
@@ -51,42 +59,11 @@ bool isWhitespace (char c) {
     return 0;
 }
 
-/**
- * Arguments:
- * -char *verse -> a string
- * Replacing all the whitespaces except ' ' in the [verse] with '@'
-*/
-void replaceSpaces(char **verse) {
-    size_t size = strlen(*verse);
-
-    for (size_t i = 0; i < size; i++) {
-        if (isWhitespace(*verse[i]) && *verse[i] != ' ')
-            *verse[i] = '@';
-    }
-}
 
 int isComment(char *verse, int size) {
     return (size > 0 && verse[0] == '#');
 }
 
-int isCorrectLine(char *verse, int size) {
-    for (int i = 0; i < size - 1; i++) {
-        char a = verse[i];
-        if (!isWhitespace(a))
-            return 0;
-    }
-    return 1;
-}
-
-//should emtpy be only when it is only enter in line
-//int isEmptyLine(char *verse, int size) {
-//    for (int i = 0; i < size - 1; i++) {
-//        if (!(isWhitespace(verse[i])))
-//            return 0;
-//    }
-//    return 1;
-//}
-
-int isEmptyLine(char *verse, int size) {
+int isEmptyLine(char *verse) {
     return verse[0] == '\0';
 }
