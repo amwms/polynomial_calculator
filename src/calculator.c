@@ -270,7 +270,7 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
         SUB(stack, nr);
     else if (hasPrefix(verse, "IS_EQ") && **verse == '\0')
         IS_EQ(stack, nr);
-    else if (hasPrefix(verse, "DEG_BY")) {
+    else if (hasPrefix(verse, "DEG_BY") && (**verse == '@' || **verse == ' ' || **verse == '\0')) {
         if (**verse == ' ') {
             (*verse)++;
             unsigned long long idx;
@@ -283,7 +283,7 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
     }
     else if (hasPrefix(verse, "DEG") && **verse == '\0')
         DEG(stack, nr);
-    else if (hasPrefix(verse, "AT")) {
+    else if (hasPrefix(verse, "AT") && (**verse == '@' || **verse == ' ' || **verse == '\0')) {
         if (**verse == ' ') {
             (*verse)++;
             long long x;
