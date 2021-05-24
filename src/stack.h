@@ -15,6 +15,11 @@
 
 #define INITIAL_STACK_SIZE 4
 
+/**
+ * Struktura trzymająca stos. Implementacja stosu jest za pomocą tablicy.
+ * Struktura trzyma tablicę, która jest rozszerzana dynamicznie, trzymającą elementy stosu
+ * oraz ile elementów jest na stosie i ile jeszcze zostało miejsca na stosie (przed rozszerzeniem go).
+ */
 typedef struct Stack {
     Poly *polys;
     int sizeUsed;
@@ -23,7 +28,7 @@ typedef struct Stack {
 
 /**
  * Tworzy stos.
- * @return Zwraca stworzony stos.
+ * @return stworzony pusty stos
 */
 Stack *createStack();
 
@@ -38,35 +43,35 @@ void addStack(Stack *stack, Poly p);
 /**
  * Usuwanie pierwszego elementu ze stosu.
  * @param[in] stos : stos
- * @return Zwraca usunięty element.
+ * @return usunięty element ze stosu
 */
 Poly removeStack(Stack *stack);
 
 /**
  * Bierze pierwszy element ze stosu.
  * @param[in] stos : stos
- * @return Zwraca pierwszy element ze stosu.
+ * @return pierwszy element ze stosu
 */
 Poly *getFirstFromStack(Stack *stack);
 
 /**
  * Bierze drugi element ze stosu.
  * @param[in] stos : stos
- * @return Zwraca drugi element ze stosu.
+ * @return drugi element ze stosu
 */
 Poly *getSecondFromStack(Stack *stack);
 
 /**
  * Sprawdza czy stos jest pusty.
  * @param[in] stos : stos
- * @return Zwraca czy stos jest pusty.
+ * @return czy stos jest pusty
 */
 bool isEmptyStack(Stack *stack);
 
 /**
  * Sprawdza czy stos ma dwa elementy.
  * @param[in] stos : stos
- * @return Zwraca czy stos ma dwa elementy.
+ * @return czy stos ma dwa elementy
 */
 bool hasTwoPolysStack(Stack *stack);
 

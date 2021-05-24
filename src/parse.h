@@ -24,21 +24,21 @@ void printPoly(Poly *poly);
 /**
  * Sprawdza czy znak jest cyfrą.
  * @param[in] c : znak
- * @return Czy znak jest cyfrą.
+ * @return czy znak jest cyfrą
 */
 bool isDigit(char c);
 
 /**
  * Parsowanie liczby long long.
  * @param[in] number : liczba
- * @return Zwraca czy udało się sparsować liczbę.
+ * @return czy udało się sparsować liczbę
 */
 bool isParseNumberLL(char **str, long long *number);
 
 /**
  * Parsowanie liczby unsigned long long.
  * @param[in] number : liczba
- * @return Zwraca czy udało się sparsować liczbę.
+ * @return czy udało się sparsować liczbę
 */
 bool isParseNumberULL(char **str, unsigned long long *number);
 

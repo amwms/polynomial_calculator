@@ -19,7 +19,7 @@
  * @param[in] used : liczba użytych miejsc w tablicy jednomianów
  * @return
 */
-void freeMemoryUsedForMonos(Mono *monos, size_t used) {
+static void freeMemoryUsedForMonos(Mono *monos, size_t used) {
     for (size_t i = 0; i < used; i++) {
         MonoDestroy(&monos[i]);
     }
@@ -32,7 +32,7 @@ void freeMemoryUsedForMonos(Mono *monos, size_t used) {
  * @param[in] mono : jednomian
  * @return
 */
-void printMono(Mono *mono) {
+static void printMono(Mono *mono) {
     printf("(");
     printPoly(&mono->p);
     printf(",%d)", mono->exp);
@@ -102,9 +102,9 @@ static inline bool isParsePoly(char **verse, Poly *p);
  * Parsowanie potencjalnego jednomianu.
  * @param[in] str : wiersz
  * @param[in] mono : jednomian
- * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako jednomian.
+ * @return czy to co było parsowane zostało poprawnie sparsowane jako jednomian
 */
-bool isParseMono(char **str, Mono *mono) {
+static bool isParseMono(char **str, Mono *mono) {
     Poly p = PolyZero();
 
     if (**str == '(') {
@@ -153,9 +153,9 @@ static void dynamicAddToMonos(size_t *free, size_t *used, Mono **monos, Mono add
  * Parsowanie potencjalnego wielomianu.
  * @param[in] str : wiersz
  * @param[in] poly : wielomian
- * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako wielomian.
+ * @return czy to co było parsowane zostało poprawnie sparsowane jako wielomian
 */
-bool isParsePoly(char **str, Poly *poly) {
+static bool isParsePoly(char **str, Poly *poly) {
     long long number;
 
     if (isParseNumberLL(str, &number)) {
@@ -197,9 +197,9 @@ bool isParsePoly(char **str, Poly *poly) {
  * Parsowanie wiersza potencjalnie zawierającego wielomian.
  * @param[in] str : wiersz
  * @param[in] poly : wielomian
- * @return Zwraca czy to co było parsowane zostało poprawnie sparsowane jako wielomian.
+ * @return czy to co było parsowane zostało poprawnie sparsowane jako wielomian
 */
-bool isParseVerse(char **str, Poly *poly) {
+static bool isParseVerse(char **str, Poly *poly) {
     if (isParsePoly(str, poly)) {
         if (**str == '\0')
             return true;

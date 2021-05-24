@@ -19,7 +19,7 @@
  * @param[in] ifAdd : czy dodawać znak bo jest ostatnim znakiem (dodatkowym dodawanym przez "nas" - '\0')
  * @return
 */
-void dynamicAddToVerse(char **verse, int *free, int *id, int *allocedVerseMemory, char c, int ifAdd) {
+static void dynamicAddToVerse(char **verse, int *free, int *id, int *allocedVerseMemory, char c, int ifAdd) {
     if (*free == 0) {
         (*verse) = safeRealloc(*verse, sizeof(char) * (*allocedVerseMemory) * 2);
         *free = *allocedVerseMemory;

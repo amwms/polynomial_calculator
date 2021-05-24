@@ -15,9 +15,9 @@
  * Sprawdza czy wzór jest prefiksem stringa.
  * @param[in] str : string
  * @param[in] poly : wielomian
- * @return Zwraca czy wzór jest prefiksem stringa.
+ * @return czy wzór jest prefiksem stringa
 */
-bool hasPrefix(char **str, char *template) {
+static bool hasPrefix(char **str, char *template) {
     char *begin = *str;
     size_t size = strlen(template);
 
@@ -39,7 +39,7 @@ bool hasPrefix(char **str, char *template) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void ZERO(Stack *stack) {
+static void ZERO(Stack *stack) {
     addStack(stack, PolyZero());
 }
 
@@ -49,7 +49,7 @@ void ZERO(Stack *stack) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void IS_COEFF(Stack *stack, int nr) {
+static void IS_COEFF(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -64,7 +64,7 @@ void IS_COEFF(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void IS_ZERO(Stack *stack, int nr) {
+static void IS_ZERO(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -95,7 +95,7 @@ void CLONE(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void ADD(Stack *stack, int nr) {
+static void ADD(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -115,7 +115,7 @@ void ADD(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void MUL(Stack *stack, int nr) {
+static void MUL(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -135,7 +135,7 @@ void MUL(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void NEG(Stack *stack, int nr) {
+static void NEG(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -154,7 +154,7 @@ void NEG(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void SUB(Stack *stack, int nr) {
+static void SUB(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -174,7 +174,7 @@ void SUB(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void IS_EQ(Stack *stack, int nr) {
+static void IS_EQ(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -189,7 +189,7 @@ void IS_EQ(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void DEG(Stack *stack, int nr) {
+static void DEG(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -205,7 +205,7 @@ void DEG(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void DEG_BY(Stack *stack, size_t varIdx, int nr) {
+static void DEG_BY(Stack *stack, size_t varIdx, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -221,7 +221,7 @@ void DEG_BY(Stack *stack, size_t varIdx, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void AT(Stack *stack, poly_coeff_t x, int nr) {
+static void AT(Stack *stack, poly_coeff_t x, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -240,7 +240,7 @@ void AT(Stack *stack, poly_coeff_t x, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void PRINT(Stack *stack, int nr) {
+static void PRINT(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
@@ -256,7 +256,7 @@ void PRINT(Stack *stack, int nr) {
  * @param[in] nr : numer wiersza
  * @return
  */
-void POP(Stack *stack, int nr) {
+static void POP(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
         fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
         return;
