@@ -17,7 +17,6 @@
  * Zwalnia pamięć użytą na tablicę elementów typu Mono.
  * @param[in] monos : tablica jednomianów
  * @param[in] used : liczba użytych miejsc w tablicy jednomianów
- * @return
 */
 static void freeMemoryUsedForMonos(Mono *monos, size_t used) {
     for (size_t i = 0; i < used; i++) {
@@ -30,7 +29,6 @@ static void freeMemoryUsedForMonos(Mono *monos, size_t used) {
 /**
  * Wypisuje jednomian.
  * @param[in] mono : jednomian
- * @return
 */
 static void printMono(Mono *mono) {
     printf("(");
@@ -138,7 +136,6 @@ static bool isParseMono(char **str, Mono *mono) {
  * @param[in] used : ilość zużytego miejsca (w tablicy jednomianów)
  * @param[in] monos : tablica jednomianów
  * @param[in] addMono : jednomian, który chcemy dodać do tablicy
- * @return
 */
 static void dynamicAddToMonos(size_t *free, size_t *used, Mono **monos, Mono addMono) {
     if (*free == 0) {
@@ -164,9 +161,9 @@ static bool isParsePoly(char **str, Poly *poly) {
     }
 
     Mono mono;
-    Mono *monos = (Mono*) safeMalloc(sizeof (Mono) * 4);
+    Mono *monos = (Mono*) safeMalloc(sizeof (Mono) * INITIAL_MONOS_SIZE);
     size_t usedSpace = 0;
-    size_t freeSpace = 4;
+    size_t freeSpace = INITIAL_MONOS_SIZE;
 
     if (**str != '\0' && isParseMono(str, &mono)) {
         dynamicAddToMonos(&freeSpace, &usedSpace, &monos, mono);

@@ -14,7 +14,7 @@
  * Wczytuje wiersz z wejścia.
  * @param[in] verse : wczytywany wiersz
  * @param[in] len : długość wiersza
- * @param[in] alloctedVerseMemory : allokowana pamięć na wiersz
+ * @param[in] allocedVerseMemory : allokowana pamięć na wiersz
  * @return czy wczytany wiersz isnieje czy jest EOF-em
 */
 int readLine(char **verse, int *len, int *allocedVerseMemory);
@@ -37,7 +37,6 @@ int isComment(char *verse, int size);
 /**
  * Sprawdza czy wiersz jest pusty.
  * @param[in] verse : wiersz
- * @param[in] size : rozmiar wiersza
  * @return czy wiersz jest pusty
 */
 int isEmptyLine(char *verse);

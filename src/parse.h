@@ -14,10 +14,12 @@
 #include "poly.h"
 #include "stack.h"
 
+/** To jest stała reprezentująca domyślą wielkość tablicy monos przy jej tworzeniu*/
+#define INITIAL_MONOS_SIZE 4
+
 /**
  * Wypisuje wielomiam.
  * @param[in] poly : wielomian
- * @return
 */
 void printPoly(Poly *poly);
 
@@ -30,6 +32,7 @@ bool isDigit(char c);
 
 /**
  * Parsowanie liczby long long.
+ * @param[in] str : wiersz
  * @param[in] number : liczba
  * @return czy udało się sparsować liczbę
 */
@@ -37,6 +40,7 @@ bool isParseNumberLL(char **str, long long *number);
 
 /**
  * Parsowanie liczby unsigned long long.
+ * @param[in] str : wiersz
  * @param[in] number : liczba
  * @return czy udało się sparsować liczbę
 */
@@ -47,7 +51,6 @@ bool isParseNumberULL(char **str, unsigned long long *number);
  * @param[in] str : wiersz
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
 */
 void parseVerse(char **str, Stack  *stack, int nr);
 

@@ -14,10 +14,9 @@
  * @param[in] verse : wczytywany wiersz
  * @param[in] free : ilość wolnego miejsca w wierszu (tablicy charów)
  * @param[in] id : indeks
- * @param[in] alloctedVerseMemory : allokowana pamięć na wiersz
+ * @param[in] allocedVerseMemory : allokowana pamięć na wiersz
  * @param[in] c : wczytywany znak
  * @param[in] ifAdd : czy dodawać znak bo jest ostatnim znakiem (dodatkowym dodawanym przez "nas" - '\0')
- * @return
 */
 static void dynamicAddToVerse(char **verse, int *free, int *id, int *allocedVerseMemory, char c, int ifAdd) {
     if (*free == 0) {

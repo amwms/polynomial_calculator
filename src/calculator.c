@@ -14,7 +14,7 @@
 /**
  * Sprawdza czy wzór jest prefiksem stringa.
  * @param[in] str : string
- * @param[in] poly : wielomian
+ * @param[in] template : wzór
  * @return czy wzór jest prefiksem stringa
 */
 static bool hasPrefix(char **str, char *template) {
@@ -36,8 +36,6 @@ static bool hasPrefix(char **str, char *template) {
 /**
  * Implementacja komendy ZERO z treści zadania.
  * @param[in] stack : stos
- * @param[in] nr : numer wiersza
- * @return
  */
 static void ZERO(Stack *stack) {
     addStack(stack, PolyZero());
@@ -47,7 +45,6 @@ static void ZERO(Stack *stack) {
  * Implementacja komendy IS_COEFF z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void IS_COEFF(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -62,7 +59,6 @@ static void IS_COEFF(Stack *stack, int nr) {
  * Implementacja komendy IS_ZERO z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void IS_ZERO(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -77,7 +73,6 @@ static void IS_ZERO(Stack *stack, int nr) {
  * Implementacja komendy CLONE z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 void CLONE(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -93,7 +88,6 @@ void CLONE(Stack *stack, int nr) {
  * Implementacja komendy ADD z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void ADD(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
@@ -113,7 +107,6 @@ static void ADD(Stack *stack, int nr) {
  * Implementacja komendy MUL z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void MUL(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
@@ -133,7 +126,6 @@ static void MUL(Stack *stack, int nr) {
  * Implementacja komendy NEG z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void NEG(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -152,7 +144,6 @@ static void NEG(Stack *stack, int nr) {
  * Implementacja komendy SUB z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void SUB(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
@@ -172,7 +163,6 @@ static void SUB(Stack *stack, int nr) {
  * Implementacja komendy IS_EQ z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void IS_EQ(Stack *stack, int nr) {
     if (!hasTwoPolysStack(stack)) {
@@ -187,7 +177,6 @@ static void IS_EQ(Stack *stack, int nr) {
  * Implementacja komendy DEG z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void DEG(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -203,7 +192,6 @@ static void DEG(Stack *stack, int nr) {
  * @param[in] stack : stos
  * @param[in] varIdx : numer indeksu według, którego liczymy stopień
  * @param[in] nr : numer wiersza
- * @return
  */
 static void DEG_BY(Stack *stack, size_t varIdx, int nr) {
     if (isEmptyStack(stack)) {
@@ -219,7 +207,6 @@ static void DEG_BY(Stack *stack, size_t varIdx, int nr) {
  * @param[in] stack : stos
  * @param[in] x : wartość, którą podstawiamy pod współczynnik x_0
  * @param[in] nr : numer wiersza
- * @return
  */
 static void AT(Stack *stack, poly_coeff_t x, int nr) {
     if (isEmptyStack(stack)) {
@@ -238,7 +225,6 @@ static void AT(Stack *stack, poly_coeff_t x, int nr) {
  * Implementacja komendy PRINT z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void PRINT(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {
@@ -254,7 +240,6 @@ static void PRINT(Stack *stack, int nr) {
  * Implementacja komendy POP z treści zadania.
  * @param[in] stack : stos
  * @param[in] nr : numer wiersza
- * @return
  */
 static void POP(Stack *stack, int nr) {
     if (isEmptyStack(stack)) {

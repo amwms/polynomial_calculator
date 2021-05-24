@@ -20,7 +20,7 @@
  * Parsuje operację kalkulatora wielomianów i jeśli jest to poprawna opercja, to ją wykonuje.
  * @param[in] stack : stos
  * @param[in] verse : parsowany wiersz
- * @return
+ * @param[in] nr : numer wiersza
  */
 void parseAndDoOperation(Stack *stack, char **verse, int nr);
 

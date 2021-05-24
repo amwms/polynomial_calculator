@@ -11,7 +11,9 @@
 #include "parse.h"
 #include "calculator.h"
 
-
+/**
+ * Działający kalkulator wielomianów, wykonujący komendy z treści zadania.
+ */
 int main() {
     int count = 1;
     int allocedVerseMemory = 4;
