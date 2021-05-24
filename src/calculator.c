@@ -267,33 +267,24 @@ static void POP(Stack *stack, int nr) {
 }
 
 void parseAndDoOperation(Stack *stack, char **verse, int nr) {
-    if (hasPrefix(verse, "ZERO") && **verse == '\0') {
+    if (hasPrefix(verse, "ZERO") && **verse == '\0')
         ZERO(stack);
-    }
-    else if (hasPrefix(verse, "IS_COEFF") && **verse == '\0') {
+    else if (hasPrefix(verse, "IS_COEFF") && **verse == '\0')
         IS_COEFF(stack, nr);
-    }
-    else if (hasPrefix(verse, "IS_ZERO") && **verse == '\0') {
+    else if (hasPrefix(verse, "IS_ZERO") && **verse == '\0')
         IS_ZERO(stack, nr);
-    }
-    else if (hasPrefix(verse, "CLONE") && **verse == '\0') {
+    else if (hasPrefix(verse, "CLONE") && **verse == '\0')
         CLONE(stack, nr);
-    }
-    else if (hasPrefix(verse, "ADD") && **verse == '\0') {
+    else if (hasPrefix(verse, "ADD") && **verse == '\0')
         ADD(stack, nr);
-    }
-    else if (hasPrefix(verse, "MUL") && **verse == '\0') {
+    else if (hasPrefix(verse, "MUL") && **verse == '\0')
         MUL(stack, nr);
-    }
-    else if (hasPrefix(verse, "NEG") && **verse == '\0') {
+    else if (hasPrefix(verse, "NEG") && **verse == '\0')
         NEG(stack, nr);
-    }
-    else if (hasPrefix(verse, "SUB") && **verse == '\0') {
+    else if (hasPrefix(verse, "SUB") && **verse == '\0')
         SUB(stack, nr);
-    }
-    else if (hasPrefix(verse, "IS_EQ") && **verse == '\0') {
+    else if (hasPrefix(verse, "IS_EQ") && **verse == '\0')
         IS_EQ(stack, nr);
-    }
     else if (hasPrefix(verse, "DEG_BY")) {
         if (**verse == ' ') {
             (*verse)++;
@@ -305,9 +296,8 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
         }
         fprintf(stderr, "ERROR %d DEG BY WRONG VARIABLE\n", nr);
     }
-    else if (hasPrefix(verse, "DEG") && **verse == '\0') {
+    else if (hasPrefix(verse, "DEG") && **verse == '\0')
         DEG(stack, nr);
-    }
     else if (hasPrefix(verse, "AT")) {
         if (**verse == ' ') {
             (*verse)++;
@@ -319,13 +309,10 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
         }
         fprintf(stderr, "ERROR %d AT WRONG VALUE\n", nr);
     }
-    else if (hasPrefix(verse, "PRINT") && **verse == '\0') {
+    else if (hasPrefix(verse, "PRINT") && **verse == '\0')
         PRINT(stack, nr);
-    }
-    else if (hasPrefix(verse, "POP") && **verse == '\0') {
+    else if (hasPrefix(verse, "POP") && **verse == '\0')
         POP(stack, nr);
-    }
-    else {
+    else
         fprintf(stderr, "ERROR %d WRONG COMMAND\n", nr);
-    }
 }
