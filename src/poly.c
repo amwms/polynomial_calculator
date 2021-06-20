@@ -465,7 +465,6 @@ static void sortMonosByExp(size_t count, Mono *monos) {
     qsort(monos, count, sizeof(Mono), compareMonosByExpQsort);
 }
 
-
 /**
  * Robi płytką kopię tablicy jednomianów.
  * @param[in] count : liczba jednomianów
