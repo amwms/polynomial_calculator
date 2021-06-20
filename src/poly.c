@@ -286,6 +286,9 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
         counter++;
     }
 
+    free(a->arr);
+    free(b->arr);
+
     return DeleteAllZeroFromPoly(counter, result);
 }
 
