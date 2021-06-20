@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 #include "poly.h"
 #include "stack.h"
 #include "parse.h"
@@ -251,6 +252,35 @@ static void POP(Stack *stack, int nr) {
     PolyDestroy(&toRemove);
 }
 
+/**
+ * Implementacja komendy COMPOSE z treści zadania.
+ * @param[in] stack : stos
+ * @param[in] k : k z treści zadania
+ * @param[in] nr : numer wiersza
+ */
+static void COMPOSE(Stack *stack, size_t k, int nr) {
+    if ((!hasKPolysStack(stack, k + 1) && k != ULONG_MAX) || k == ULONG_MAX) {
+        fprintf(stderr, "ERROR %d STACK UNDERFLOW\n", nr);
+        return;
+    }
+
+    Poly p = removeStack(stack);
+    Poly *q = safeMalloc(sizeof(Poly) * k);
+
+    for (size_t i = 0; i < k; i++) {
+        q[k - 1 - i] = removeStack(stack);
+    }
+
+    Poly result = PolyCompose(&p, k, q);
+    addStack(stack, result);
+
+    PolyDestroy(&p);
+    for (size_t i = 0; i < k; i++) {
+        PolyDestroy(&q[i]);
+    }
+    free(q);
+}
+
 void parseAndDoOperation(Stack *stack, char **verse, int nr) {
     if (hasPrefix(verse, "ZERO") && **verse == '\0')
         ZERO(stack);
@@ -298,6 +328,17 @@ void parseAndDoOperation(Stack *stack, char **verse, int nr) {
         PRINT(stack, nr);
     else if (hasPrefix(verse, "POP") && **verse == '\0')
         POP(stack, nr);
+    else if (hasPrefix(verse, "COMPOSE") && (**verse == '@' || **verse == ' ' || **verse == '\0')) {
+        if (**verse == ' ') {
+            (*verse)++;
+            unsigned long long k;
+            if (isParseNumberULL(verse, &k) && **verse == '\0') {
+                COMPOSE(stack, k, nr);
+                return;
+            }
+        }
+        fprintf(stderr, "ERROR %d COMPOSE WRONG PARAMETER\n", nr);
+    }
     else
         fprintf(stderr, "ERROR %d WRONG COMMAND\n", nr);
 }

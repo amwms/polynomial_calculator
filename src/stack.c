@@ -31,6 +31,8 @@ void addStack(Stack *stack, Poly p) {
 }
 
 Poly removeStack(Stack *stack) {
+    assert(stack->sizeUsed > 0);
+
     Poly p = stack->polys[stack->sizeUsed - 1];
     stack->sizeUsed -= 1;
     stack->sizeFree += 1;
@@ -59,3 +61,6 @@ bool hasTwoPolysStack(Stack *stack) {
     return stack->sizeUsed >= 2;
 }
 
+bool hasKPolysStack(Stack *stack, size_t k) {
+    return stack->sizeUsed >= k;
+}

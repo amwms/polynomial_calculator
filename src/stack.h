@@ -28,9 +28,9 @@ typedef struct Stack {
     /** To jest tablica trzymająca wielomiany znajdujące się na stosie.*/
     Poly *polys;
     /** To jest zmienna mówiąca ile wielomianów jest już na stosie.*/
-    int sizeUsed;
+    size_t sizeUsed;
     /** To jest zmienna mówiąca ile miejsca zostało na stosie (przed rozszerzeniem tablicy polys).*/
-    int sizeFree;
+    size_t sizeFree;
 } Stack;
 
 /**
@@ -81,5 +81,12 @@ bool isEmptyStack(Stack *stack);
  * @return czy stos ma dwa elementy
 */
 bool hasTwoPolysStack(Stack *stack);
+
+/**
+ * Sprawdza czy stos ma k elementów.
+ * @param[in] stack : stos
+ * @return czy stos ma dwa elementy
+*/
+bool hasKPolysStack(Stack *stack, size_t k);
 
 #endif

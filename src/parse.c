@@ -56,20 +56,20 @@ bool isDigit(char c) {
 
 bool isParseNumberLL(char **str, long long *number) {
     char *const begin = *str;
-    bool isMinus = false;
+//    bool isMinus = false;
 
-    if (*str[0] == '-') {
-        isMinus = true;
-        (*str)++;
-    }
+//    if (*str[0] == '-') {
+//        isMinus = true;
+//        (*str)++;
+//    }
 
-    if (isDigit(*str[0])) {
+    if (isDigit(*str[0]) || *str[0] == '-') {
         errno = 0;
         *number = strtoll(*str, str, 10);
 
         if (errno == 0) {
-            if (isMinus)
-                *number *= -1;
+//            if (isMinus)
+//                *number *= -1;
             return true;
         }
     }
@@ -77,6 +77,32 @@ bool isParseNumberLL(char **str, long long *number) {
     *str = begin;
     return false;
 }
+// TODO
+/*
+ * bool isParseNumberLL(char **str, long long *number) {
+    char *const begin = *str;
+    bool isMinus = false;
+
+//    if (*str[0] == '-') {
+//        isMinus = true;
+//        (*str)++;
+//    }
+
+    if ((*str[0] == '-' && isDigit(*str[1])) || isDigit(*str[0])) {
+        errno = 0;
+        *number = strtoll(*str, str, 10);
+
+        if (errno == 0) {
+//            if (isMinus)
+//                *number *= -1;
+            return true;
+        }
+    }
+
+    *str = begin;
+    return false;
+}
+ * */
 
 bool isParseNumberULL(char **str, unsigned long long *number) {
     char *const begin = *str;

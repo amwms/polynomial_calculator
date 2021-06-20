@@ -12,6 +12,7 @@
 #include "memory.h"
 #include "parse.h"
 #include "poly.h"
+#include "poly_composing.h"
 
 /**
 * Sprawdza czy jednomiany w wielomianie są posortowane malejąco po wykładnikach
@@ -648,4 +649,8 @@ Poly PolyAt(const Poly *p, poly_coeff_t x) {
     free(result.arr);
 
     return resultFinal;
+}
+
+Poly PolyCompose(const Poly *p, size_t k, Poly q[]) {
+    return compose(p, k, q);
 }
