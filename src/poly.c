@@ -73,9 +73,9 @@ static Poly PolyAddProperty(Poly *a, Poly *b);
 
 /**
  * Dodaje dwa wielomiany które są współczynnikami.
- * @param[in] p : wielomian (współczynnik)
- * @param[in] q : wielomian (współczynnik)
- * @return @f$p + q@f$
+ * @param[in] a : wielomian (współczynnik)
+ * @param[in] b : wielomian (współczynnik)
+ * @return @f$a + b@f$
  */
 static Poly CoeffAddCoeff(Poly *a, Poly *b) {
 //    assert(PolyIsCoeff(p) && PolyIsCoeff(q));
@@ -83,6 +83,7 @@ static Poly CoeffAddCoeff(Poly *a, Poly *b) {
 //    poly_coeff_t value = p->coeff + q->coeff;
 //
 //    return PolyFromCoeff(value);
+
     assert(PolyIsCoeff(a) && PolyIsCoeff(b));
 
     return PolyFromCoeff(a->coeff + b->coeff);
@@ -90,9 +91,9 @@ static Poly CoeffAddCoeff(Poly *a, Poly *b) {
 
 /**
  * Dodaje dwa wielomiany - wielomian (nie będący współczynnikiem) i wpółczynnik.
- * @param[in] p : wielomian
- * @param[in] q : wielomian (współczynnik)
- * @return @f$p + q@f$
+ * @param[in] a : wielomian
+ * @param[in] b : wielomian (współczynnik)
+ * @return @f$a + b@f$
  */
 static Poly NonCoeffAddCoeff(Poly *a, Poly *b) {
 //    assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
@@ -134,6 +135,7 @@ static Poly NonCoeffAddCoeff(Poly *a, Poly *b) {
 //    }
 //
 //    return result;
+
     assert(!PolyIsCoeff(a) && PolyIsCoeff(b));
     assert(isSorted(a));
 
@@ -182,9 +184,9 @@ static Poly DeleteAllZeroFromPoly(size_t diffExps, Poly result) {
 
 /**
  * Dodaje dwa wielomiany, które nie są współczynnikami.
- * @param[in] p : wielomian
- * @param[in] q : wielomian
- * @return @f$p + q@f$
+ * @param[in] a : wielomian
+ * @param[in] b : wielomian
+ * @return @f$a + b@f$
  */
 static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
 //    assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
@@ -247,9 +249,6 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
     assert(!PolyIsCoeff(a) && !PolyIsCoeff(b));
     assert(isSorted(a) && isSorted(b));
 
-//    printf("a: "); printPoly(a); printf("\n");
-//    printf("b: "); printPoly(b); printf("\n");
-
     size_t size = a->size + b->size;
 
     Poly result = PolyCreate(size);
@@ -293,35 +292,25 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
 }
 
 // TODO
-Poly PolyAddProperty(Poly *a, Poly *b) {
+static Poly PolyAddProperty(Poly *a, Poly *b) {
 
     if (PolyIsZero(a)) {
-        // printf("CASE ZEROa");
         PolyDestroy(a);
         return *b;
     }
     else if (PolyIsZero(b)) {
-        // printf("CASE ZEROb");
         PolyDestroy(b);
         return *a;
     }
 
-    if (PolyIsCoeff(a) && PolyIsCoeff(b)) {
-        // printf("CASE cc");
+    if (PolyIsCoeff(a) && PolyIsCoeff(b))
         return CoeffAddCoeff(a, b);
-    }
-    else if (!PolyIsCoeff(a) && PolyIsCoeff(b)) {
-        // printf("CASE ncc");
+    else if (!PolyIsCoeff(a) && PolyIsCoeff(b))
         return NonCoeffAddCoeff(a, b);
-    }
-    else if (PolyIsCoeff(a) && !PolyIsCoeff(b)) {
-        // printf("CASE cnc");
+    else if (PolyIsCoeff(a) && !PolyIsCoeff(b))
         return NonCoeffAddCoeff(b, a);
-    }
-    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b)) {
-        // printf("CASE ncnc");
+    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b))
         return NonCoeffAddNonCoeff(a, b);
-    }
 
     assert (false);
 }
