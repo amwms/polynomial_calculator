@@ -78,12 +78,6 @@ static Poly PolyAddProperty(Poly *a, Poly *b);
  * @return @f$a + b@f$
  */
 static Poly CoeffAddCoeff(Poly *a, Poly *b) {
-//    assert(PolyIsCoeff(p) && PolyIsCoeff(q));
-//
-//    poly_coeff_t value = p->coeff + q->coeff;
-//
-//    return PolyFromCoeff(value);
-
     assert(PolyIsCoeff(a) && PolyIsCoeff(b));
 
     return PolyFromCoeff(a->coeff + b->coeff);
@@ -189,63 +183,6 @@ static Poly DeleteAllZeroFromPoly(size_t diffExps, Poly result) {
  * @return @f$a + b@f$
  */
 static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
-//    assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
-//    assert(isSorted(p) && isSorted(q));
-//
-//    size_t size = p->size + q->size;
-////    Mono *monos = safeMalloc(sizeof(Mono) * size);
-////
-////    for (size_t i = 0; i < size; i++) {
-////        if (i < p->size) {
-////            monos[i] = MonoClone(&p->arr[i]);
-////        }
-////        else {
-////            monos[i] = MonoClone(&q->arr[i - p->size]);
-////        }
-////    }
-////
-////    Poly result = PolyAddMonos(size, monos);
-////    free(monos);
-//// return result;
-//
-//    Poly result = PolyCreate(size);
-//    size_t counter = 0;
-//    size_t pId = 0, qId = 0;
-//
-//    while (pId < p->size && qId < q->size) {
-//        if (compareMonosByExp(&p->arr[pId], &q->arr[qId]) == 0) {
-//            result.arr[counter].p = PolyAdd(&p->arr[pId].p, &q->arr[qId].p);
-//            result.arr[counter].exp = p->arr[pId].exp;
-//
-//            pId++;
-//            qId++;
-//        }
-//        else {
-//            if (compareMonosByExp(&p->arr[pId], &q->arr[qId]) > 0) {
-//                result.arr[counter] = MonoClone(&(p->arr[pId]));
-//                pId++;
-//            }
-//            else {
-//                result.arr[counter] = MonoClone(&(q->arr[qId]));
-//                qId++;
-//            }
-//        }
-//        counter++;
-//    }
-//
-//    while (pId < p->size) {
-//        result.arr[counter] = MonoClone(&(p->arr[pId]));
-//        pId++;
-//        counter++;
-//    }
-//    while (qId < q->size) {
-//        result.arr[counter] = MonoClone(&(q->arr[qId]));
-//        qId++;
-//        counter++;
-//    }
-//
-//    return DeleteAllZeroFromPoly(counter, result);
-
     assert(!PolyIsCoeff(a) && !PolyIsCoeff(b));
     assert(isSorted(a) && isSorted(b));
 
@@ -570,26 +507,6 @@ Poly PolyClone(const Poly *p) {
     return p2;
 }
 
-// ZMIANA TODO
-//Poly PolyAddOld(const Poly *p, const Poly *q) {
-//    if (PolyIsZero(p))
-//        return PolyClone(q);
-//    if (PolyIsZero(q))
-//        return PolyClone(p);
-//
-//    if (PolyIsCoeff(p)) {
-//        if (PolyIsCoeff(q))
-//            return CoeffAddCoeff(p, q);
-//
-//        return NonCoeffAddCoeff(q, p);
-//    }
-//
-//    if (PolyIsCoeff(q))
-//        return NonCoeffAddCoeff(p, q);
-//
-//    return NonCoeffAddNonCoeff(p, q);
-//}
-
 Poly PolyAdd(const Poly *p, const Poly *q) {
     Poly a = PolyClone(p);
     Poly b = PolyClone(q);
@@ -631,27 +548,6 @@ Poly PolyMul(const Poly *p, const Poly *q) {
 
     return NonCoeffMulNonCoeff(p, q);
 }
-
-// ZMIANA TODO
-//Poly PolyNegOld(const Poly *p) {
-//    Poly p_neg = {.coeff = (-1), .arr = NULL};
-//    Poly result = PolyMul(p, &p_neg);
-//
-//    PolyDestroy(&p_neg);
-//
-//    return result;
-//    if (PolyIsCoeff(p))
-//        return PolyFromCoeff((-1) * p->coeff);
-//
-//    Poly result = PolyCreate(p->size);
-//    for (size_t i = 0; i < p->size; i++) {
-//        Poly neg_poly = PolyNeg(&p->arr[i].p);
-//        result.arr[i].p = neg_poly;
-//    }
-//
-//    printPoly(&result);
-//    return result;
-//}
 
 Poly PolyNeg(const Poly *p) {
     Poly a = PolyClone(p);
