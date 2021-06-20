@@ -429,135 +429,6 @@ Poly PolyNegProperty(Poly *a) {
     return *a;
 }
 
-/* ZMIANY */
-
-//static Poly PolyAddProperty(Poly *a, Poly *b);
-//
-//Poly CoeffAddCoeffProperty(Poly *a, Poly *b) {
-//    assert(PolyIsCoeff(a));
-//    assert(PolyIsCoeff(b));
-//
-//    return PolyFromCoeff(a->coeff + b->coeff);
-//}
-//
-//Poly NonCoeffAddCoeffProperty(Poly *a, Poly *b) {
-//    assert(PolyIsCoeff(a));
-//    assert(!PolyIsCoeff(b));
-//
-//    Poly temp = {.size = 1, .arr = safeMalloc(sizeof(Mono))};
-//    temp.arr[0].exp = 0;
-//    temp.arr[0].p = *a;
-//
-//    return PolyAddProperty(&temp, b);
-//}
-//
-//Poly NonCoeffAddNonCoeffProperty(Poly *a, Poly *b) {
-//    assert(!PolyIsCoeff(a));
-//    assert(!PolyIsCoeff(b));
-//
-////    printf("a: "); printPoly(a); printf("\n");
-////    printf("b: "); printPoly(b); printf("\n");
-//
-//    size_t size = a->size + b->size;
-//
-//    Poly result = PolyCreate(size);
-//    size_t counter = 0;
-//    size_t pId = 0, qId = 0;
-//
-//    while (pId < a->size && qId < b->size) {
-//        if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) == 0) {
-//            result.arr[counter].p = PolyAddProperty(&a->arr[pId].p, &b->arr[qId].p);
-//            result.arr[counter].exp = a->arr[pId].exp;
-//
-//            pId++;
-//            qId++;
-//        } else {
-//            if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) > 0) {
-//                result.arr[counter] = a->arr[pId];
-//                pId++;
-//            } else {
-//                result.arr[counter] = b->arr[qId];
-//                qId++;
-//            }
-//        }
-//        counter++;
-//    }
-//
-//    while (pId < a->size) {
-//        result.arr[counter] = a->arr[pId];
-//        pId++;
-//        counter++;
-//    }
-//    while (qId < b->size) {
-//        result.arr[counter] = b->arr[qId];
-//        qId++;
-//        counter++;
-//    }
-//
-//    return DeleteAllZeroFromPoly(counter, result);
-//}
-//
-//Poly PolyAddProperty(Poly *a, Poly *b) {
-//
-//    if (PolyIsZero(a)) {
-//        // printf("CASE ZEROa");
-//        PolyDestroy(a);
-//        return *b;
-//    }
-//    else if (PolyIsZero(b)) {
-//        // printf("CASE ZEROb");
-//        PolyDestroy(b);
-//        return *a;
-//    }
-//
-//    if (PolyIsCoeff(a) && PolyIsCoeff(b)) {
-//        // printf("CASE cc");
-//        return CoeffAddCoeffProperty(a, b);
-//    }
-//    else if (PolyIsCoeff(a) && !PolyIsCoeff(b)) {
-//        // printf("CASE cnc");
-//        return NonCoeffAddCoeffProperty(a, b);
-//    }
-//    else if (!PolyIsCoeff(a) && PolyIsCoeff(b)) {
-//        // printf("CASE ncc");
-//        return NonCoeffAddCoeffProperty(b, a);
-//    }
-//    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b)) {
-//        // printf("CASE ncnc");
-//        return NonCoeffAddNonCoeffProperty(a, b);
-//    }
-//
-//    assert (false);
-//}
-//
-//Poly PolyAdd(const Poly *p, const Poly *q) {
-//    Poly a = PolyClone(p);
-//    Poly b = PolyClone(q);
-//
-//    return PolyAddProperty(&a, &b);
-//}
-//
-//Poly PolyNegProperty(Poly *a) {
-//    if (PolyIsCoeff(a)) {
-//        a->coeff *= -1;
-//    }
-//    else {
-//        for (size_t i = 0; i < a->size; ++i) {
-//            PolyNegProperty(&a->arr[i].p);
-//        }
-//    }
-//
-//    return *a;
-//}
-//
-//Poly PolyNeg(const Poly *p) {
-//    Poly a = PolyClone(p);
-//
-//    return PolyNegProperty(&a);
-//}
-
-/* ZMIANY KONIEC */
-
 /**
  * Podnosi a do potęgi x.
  * @param[in] a : podstawa
@@ -608,6 +479,65 @@ static Mono* copyMonoArray(size_t count, const Mono monos[]) {
         result[i] = monos[i];
 
     return result;
+}
+
+// TODO
+static Mono* deepCopyMonoArray(size_t count, const Mono monos[]) {
+    Mono *result = safeMalloc(sizeof(Mono) * count);
+
+    for (size_t i = 0; i < count; i++)
+        result[i] = MonoClone(&monos[i]);
+
+    return result;
+}
+
+// TODO
+static Poly PolyAddMonosForAll(size_t count, Mono *myMonos) {
+    sortMonosByExp(count, myMonos);
+
+    if (count == 1) {
+        if (PolyIsCoeff(&myMonos[0].p) && myMonos[0].exp == 0) {
+            poly_coeff_t coeffFinal = myMonos[0].p.coeff;
+            free(myMonos);
+
+            return PolyFromCoeff(coeffFinal);
+        }
+    }
+
+    if (count < 1) {
+        free(myMonos);
+        return PolyZero();
+    }
+
+    size_t diffExps = howManyDiffExp(count, myMonos);
+    Poly result = PolyCreate(diffExps);
+    Poly helper = myMonos[0].p;
+    poly_exp_t helperExp = myMonos[0].exp;
+    size_t resultId = 0;
+
+    for (size_t i = 1; i < count; i++) {
+        if (PolyIsZero(&myMonos[i].p))
+            continue;
+
+        if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
+            Poly pom = PolyAddProperty(&helper, &myMonos[i].p);
+            helper = pom;
+
+            continue;
+        }
+
+        result.arr[resultId] = (Mono) {.p = helper, .exp = helperExp};
+
+        helper = myMonos[i].p;
+        helperExp = myMonos[i].exp;
+        resultId++;
+    }
+
+    if (resultId < diffExps)
+        result.arr[diffExps - 1] = (Mono) {.p = helper, .exp = helperExp};
+
+    free(myMonos);
+    return DeleteAllZeroFromPoly(diffExps, result);
 }
 
 Poly PolyCreate(size_t size) {
@@ -669,94 +599,20 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
 }
 
 Poly PolyAddMonos(size_t count, const Mono monos[]) {
-    // printf("PAM");
     Mono *myMonos = copyMonoArray(count, monos);
-    sortMonosByExp(count, myMonos);
 
-    if (count == 1) {
-        if (PolyIsCoeff(&monos[0].p) && monos[0].exp == 0) {
-            poly_coeff_t coeffFinal = myMonos[0].p.coeff;
-            free(myMonos);
-
-            return PolyFromCoeff(coeffFinal);
-        }
-    }
-
-    if (count < 1) {
-        free(myMonos);
-        return PolyZero();
-    }
-
-    size_t diffExps = howManyDiffExp(count, myMonos);
-    Poly result = PolyCreate(diffExps);
-    Poly helper = myMonos[0].p;
-    poly_exp_t helperExp = myMonos[0].exp;
-    size_t resultId = 0;
-
-    for (size_t i = 1; i < count; i++) {
-        if (PolyIsZero(&myMonos[i].p))
-            continue;
-
-        if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
-            Poly pom = PolyAddProperty(&helper, &myMonos[i].p); // ZMIANA
-            //PolyDestroy(&helper); // ZMIANA
-            //PolyDestroy(&myMonos[i].p); // ZMIANA
-            helper = pom;
-
-            continue;
-        }
-
-        // ZMIANY
-        //result.arr[resultId] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
-        result.arr[resultId] = (Mono) {.p = helper, .exp = helperExp};
-
-        //PolyDestroy(&helper);
-        helper = myMonos[i].p;
-        helperExp = myMonos[i].exp;
-        resultId++;
-    }
-
-    if (resultId < diffExps)
-        // result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
-        result.arr[diffExps - 1] = (Mono) {.p = helper, .exp = helperExp};
-
-    // PolyDestroy(&helper); // ZMIANA
-
-    //przepisujemy tak, żeby nie było wśród jednomianów jednomianów zerowych
-    size_t zeros = 0;
-    for (size_t i = 0; i < diffExps; i++) {
-        if (PolyIsZero(&result.arr[i].p))
-            zeros++;
-    }
-
-    Poly resultFinal = PolyCreate(diffExps - zeros);
-
-    if (!PolyIsCoeff(&resultFinal)) {
-        size_t id = 0;
-        for(size_t i = 0; i < diffExps; i++) {
-            if (!PolyIsZero(&result.arr[i].p)) {
-                resultFinal.arr[id] = result.arr[i];
-                id++;
-            }
-        }
-
-        //jeśli wielomian jest współczynnikiem, zwracamy współczynnik
-        if (resultFinal.size == 1 && PolyIsCoeff(&resultFinal.arr[0].p) && resultFinal.arr[0].exp == 0) {
-            poly_coeff_t coeffFinal = resultFinal.arr[0].p.coeff;
-            PolyDestroy(&resultFinal);
-            free(result.arr);
-            free(myMonos);
-
-            return PolyFromCoeff(coeffFinal);
-        }
-    }
-
-    free(myMonos);
-    free(result.arr);
-
-    return resultFinal;
+    return PolyAddMonosForAll(count, myMonos);
 }
 
+Poly PolyOwnMonos(size_t count, Mono *monos) {
+    return PolyAddMonosForAll(count, monos);
+}
+
+Poly PolyCloneMonos(size_t count, const Mono monos[]) {
+    Mono *myMonos = deepCopyMonoArray(count, monos);
+
+    return PolyAddMonosForAll(count, myMonos);
+}
 
 Poly PolyMul(const Poly *p, const Poly *q) {
     if (PolyIsZero(p))
