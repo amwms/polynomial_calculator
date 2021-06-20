@@ -21,6 +21,8 @@ set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
 
 # Wskazujemy pliki źródłowe.
 set(SOURCE_FILES
+    src/poly_composing.c
+    src/poly_composing.h
     src/read.c
     src/read.h
     src/calc.c
@@ -40,6 +42,8 @@ add_executable(poly ${SOURCE_FILES})
 
 # Wskazujemy pliki źródłowe.
 set(TEST_SOURCE_FILES
+        src/poly_composing.c
+        src/poly_composing.h
         src/read.c
         src/read.h
         src/calculator.c
