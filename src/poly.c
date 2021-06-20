@@ -8,7 +8,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include "memory.h"
+#include "parse.h"
 #include "poly.h"
 
 /**
@@ -67,18 +69,23 @@ static poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
     return a < b ? b : a;
 }
 
+static Poly PolyAddProperty(Poly *a, Poly *b);
+
 /**
  * Dodaje dwa wielomiany które są współczynnikami.
  * @param[in] p : wielomian (współczynnik)
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
-static Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
-    assert(PolyIsCoeff(p) && PolyIsCoeff(q));
+static Poly CoeffAddCoeff(Poly *a, Poly *b) {
+//    assert(PolyIsCoeff(p) && PolyIsCoeff(q));
+//
+//    poly_coeff_t value = p->coeff + q->coeff;
+//
+//    return PolyFromCoeff(value);
+    assert(PolyIsCoeff(a) && PolyIsCoeff(b));
 
-    poly_coeff_t value = p->coeff + q->coeff;
-
-    return PolyFromCoeff(value);
+    return PolyFromCoeff(a->coeff + b->coeff);
 }
 
 /**
@@ -87,47 +94,91 @@ static Poly CoeffAddCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian (współczynnik)
  * @return @f$p + q@f$
  */
-static Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
-    assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
-    assert(isSorted(p));
+static Poly NonCoeffAddCoeff(Poly *a, Poly *b) {
+//    assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
+//    assert(isSorted(p));
+//
+//    size_t size = p->size;
+//
+//    //przypadek że q == 0
+//    if (PolyIsZero(q))
+//        return PolyClone(p);
+//
+//    //przypadek że nie istnieje czynnik x_0^0(...)
+//    if (p->arr[size - 1].exp != 0) {
+//        Poly result = PolyClone(p);
+//        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size + 1));
+//
+//        result.size++;
+//        result.arr[size] = MonoFromPoly(q, 0);
+//
+//        return result;
+//    }
+//
+//    //przypadek że istnieje czynnik x_0^0(...)
+//    Poly result = PolyClone(p);
+//    Poly res = PolyAdd(&p->arr[size - 1].p, q);
+//
+//    PolyDestroy(&result.arr[size - 1].p);
+//    result.arr[size - 1].p = res;
+//
+//    if (PolyIsZero(&res)) {
+//        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size - 1));
+//        result.size--;
+//    }
+//
+//    if (result.size == 0) {
+//        PolyDestroy(&result);
+//
+//        return PolyZero();
+//    }
+//
+//    return result;
+    assert(!PolyIsCoeff(a) && PolyIsCoeff(b));
+    assert(isSorted(a));
 
-    size_t size = p->size;
+    Poly helper = {.size = 1, .arr = safeMalloc(sizeof(Mono))};
+    helper.arr[0].exp = 0;
+    helper.arr[0].p = *b;
 
-    //przypadek że q == 0
-    if (PolyIsZero(q))
-        return PolyClone(p);
-
-    //przypadek że nie istnieje czynnik x_0^0(...)
-    if (p->arr[size - 1].exp != 0) {
-        Poly result = PolyClone(p);
-        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size + 1));
-
-        result.size++;
-        result.arr[size] = MonoFromPoly(q, 0);
-
-        return result;
-    }
-
-    //przypadek że istnieje czynnik x_0^0(...)
-    Poly result = PolyClone(p);
-    Poly res = PolyAdd(&p->arr[size - 1].p, q);
-
-    PolyDestroy(&result.arr[size - 1].p);
-    result.arr[size - 1].p = res;
-
-    if (PolyIsZero(&res)) {
-        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size - 1));
-        result.size--;
-    }
-
-    if (result.size == 0) {
-        PolyDestroy(&result);
-
-        return PolyZero();
-    }
-
-    return result;
+    return PolyAddProperty(&helper, a);
 }
+
+//funkcja pomocnicza do komentowania TODO
+static Poly DeleteAllZeroFromPoly(size_t diffExps, Poly result) {
+    //przepisujemy tak, żeby nie było wśród jednomianów jednomianów zerowych
+    size_t zeros = 0;
+    for (size_t i = 0; i < diffExps; i++) {
+        if (PolyIsZero(&result.arr[i].p))
+            zeros++;
+    }
+
+    Poly resultFinal = PolyCreate(diffExps - zeros);
+
+    if (!PolyIsCoeff(&resultFinal)) {
+        size_t id = 0;
+        for(size_t i = 0; i < diffExps; i++) {
+            if (!PolyIsZero(&result.arr[i].p)) {
+                resultFinal.arr[id] = result.arr[i];
+                id++;
+            }
+        }
+
+        //jeśli wielomian jest współczynnikiem, zwracamy współczynnik
+        if (resultFinal.size == 1 && PolyIsCoeff(&resultFinal.arr[0].p) && resultFinal.arr[0].exp == 0) {
+            poly_coeff_t coeffFinal = resultFinal.arr[0].p.coeff;
+            PolyDestroy(&resultFinal);
+            free(result.arr);
+
+            return PolyFromCoeff(coeffFinal);
+        }
+    }
+
+    free(result.arr);
+
+    return  resultFinal;
+}
+
 
 /**
  * Dodaje dwa wielomiany, które nie są współczynnikami.
@@ -135,26 +186,141 @@ static Poly NonCoeffAddCoeff(const Poly *p, const Poly *q) {
  * @param[in] q : wielomian
  * @return @f$p + q@f$
  */
-static Poly NonCoeffAddNonCoeff(const Poly *p, const Poly *q) {
-    assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
-    assert(isSorted(p) && isSorted(q));
+static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
+//    assert(!PolyIsCoeff(p) && !PolyIsCoeff(q));
+//    assert(isSorted(p) && isSorted(q));
+//
+//    size_t size = p->size + q->size;
+////    Mono *monos = safeMalloc(sizeof(Mono) * size);
+////
+////    for (size_t i = 0; i < size; i++) {
+////        if (i < p->size) {
+////            monos[i] = MonoClone(&p->arr[i]);
+////        }
+////        else {
+////            monos[i] = MonoClone(&q->arr[i - p->size]);
+////        }
+////    }
+////
+////    Poly result = PolyAddMonos(size, monos);
+////    free(monos);
+//// return result;
+//
+//    Poly result = PolyCreate(size);
+//    size_t counter = 0;
+//    size_t pId = 0, qId = 0;
+//
+//    while (pId < p->size && qId < q->size) {
+//        if (compareMonosByExp(&p->arr[pId], &q->arr[qId]) == 0) {
+//            result.arr[counter].p = PolyAdd(&p->arr[pId].p, &q->arr[qId].p);
+//            result.arr[counter].exp = p->arr[pId].exp;
+//
+//            pId++;
+//            qId++;
+//        }
+//        else {
+//            if (compareMonosByExp(&p->arr[pId], &q->arr[qId]) > 0) {
+//                result.arr[counter] = MonoClone(&(p->arr[pId]));
+//                pId++;
+//            }
+//            else {
+//                result.arr[counter] = MonoClone(&(q->arr[qId]));
+//                qId++;
+//            }
+//        }
+//        counter++;
+//    }
+//
+//    while (pId < p->size) {
+//        result.arr[counter] = MonoClone(&(p->arr[pId]));
+//        pId++;
+//        counter++;
+//    }
+//    while (qId < q->size) {
+//        result.arr[counter] = MonoClone(&(q->arr[qId]));
+//        qId++;
+//        counter++;
+//    }
+//
+//    return DeleteAllZeroFromPoly(counter, result);
 
-    size_t size = p->size + q->size;
-    Mono *monos = safeMalloc(sizeof(Mono) * size);
+    assert(!PolyIsCoeff(a) && !PolyIsCoeff(b));
+    assert(isSorted(a) && isSorted(b));
 
-    for (size_t i = 0; i < size; i++) {
-        if (i < p->size) {
-            monos[i] = MonoClone(&p->arr[i]);
+//    printf("a: "); printPoly(a); printf("\n");
+//    printf("b: "); printPoly(b); printf("\n");
+
+    size_t size = a->size + b->size;
+
+    Poly result = PolyCreate(size);
+    size_t counter = 0;
+    size_t pId = 0, qId = 0;
+
+    while (pId < a->size && qId < b->size) {
+        if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) == 0) {
+            result.arr[counter].p = PolyAddProperty(&a->arr[pId].p, &b->arr[qId].p);
+            result.arr[counter].exp = a->arr[pId].exp;
+
+            pId++;
+            qId++;
+        } else {
+            if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) > 0) {
+                result.arr[counter] = a->arr[pId];
+                pId++;
+            } else {
+                result.arr[counter] = b->arr[qId];
+                qId++;
+            }
         }
-        else {
-            monos[i] = MonoClone(&q->arr[i - p->size]);
-        }
+        counter++;
     }
 
-    Poly result = PolyAddMonos(size, monos);
-    free(monos);
+    while (pId < a->size) {
+        result.arr[counter] = a->arr[pId];
+        pId++;
+        counter++;
+    }
+    while (qId < b->size) {
+        result.arr[counter] = b->arr[qId];
+        qId++;
+        counter++;
+    }
 
-    return result;
+    return DeleteAllZeroFromPoly(counter, result);
+}
+
+// TODO
+Poly PolyAddProperty(Poly *a, Poly *b) {
+
+    if (PolyIsZero(a)) {
+        // printf("CASE ZEROa");
+        PolyDestroy(a);
+        return *b;
+    }
+    else if (PolyIsZero(b)) {
+        // printf("CASE ZEROb");
+        PolyDestroy(b);
+        return *a;
+    }
+
+    if (PolyIsCoeff(a) && PolyIsCoeff(b)) {
+        // printf("CASE cc");
+        return CoeffAddCoeff(a, b);
+    }
+    else if (!PolyIsCoeff(a) && PolyIsCoeff(b)) {
+        // printf("CASE ncc");
+        return NonCoeffAddCoeff(a, b);
+    }
+    else if (PolyIsCoeff(a) && !PolyIsCoeff(b)) {
+        // printf("CASE cnc");
+        return NonCoeffAddCoeff(b, a);
+    }
+    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b)) {
+        // printf("CASE ncnc");
+        return NonCoeffAddNonCoeff(a, b);
+    }
+
+    assert (false);
 }
 
 /**
@@ -257,6 +423,149 @@ static Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
     return result;
 }
 
+// TODO
+Poly PolyNegProperty(Poly *a) {
+    if (PolyIsCoeff(a)) {
+        a->coeff *= -1;
+    }
+    else {
+        for (size_t i = 0; i < a->size; ++i) {
+            PolyNegProperty(&a->arr[i].p);
+        }
+    }
+
+    return *a;
+}
+
+/* ZMIANY */
+
+//static Poly PolyAddProperty(Poly *a, Poly *b);
+//
+//Poly CoeffAddCoeffProperty(Poly *a, Poly *b) {
+//    assert(PolyIsCoeff(a));
+//    assert(PolyIsCoeff(b));
+//
+//    return PolyFromCoeff(a->coeff + b->coeff);
+//}
+//
+//Poly NonCoeffAddCoeffProperty(Poly *a, Poly *b) {
+//    assert(PolyIsCoeff(a));
+//    assert(!PolyIsCoeff(b));
+//
+//    Poly temp = {.size = 1, .arr = safeMalloc(sizeof(Mono))};
+//    temp.arr[0].exp = 0;
+//    temp.arr[0].p = *a;
+//
+//    return PolyAddProperty(&temp, b);
+//}
+//
+//Poly NonCoeffAddNonCoeffProperty(Poly *a, Poly *b) {
+//    assert(!PolyIsCoeff(a));
+//    assert(!PolyIsCoeff(b));
+//
+////    printf("a: "); printPoly(a); printf("\n");
+////    printf("b: "); printPoly(b); printf("\n");
+//
+//    size_t size = a->size + b->size;
+//
+//    Poly result = PolyCreate(size);
+//    size_t counter = 0;
+//    size_t pId = 0, qId = 0;
+//
+//    while (pId < a->size && qId < b->size) {
+//        if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) == 0) {
+//            result.arr[counter].p = PolyAddProperty(&a->arr[pId].p, &b->arr[qId].p);
+//            result.arr[counter].exp = a->arr[pId].exp;
+//
+//            pId++;
+//            qId++;
+//        } else {
+//            if (compareMonosByExp(&a->arr[pId], &b->arr[qId]) > 0) {
+//                result.arr[counter] = a->arr[pId];
+//                pId++;
+//            } else {
+//                result.arr[counter] = b->arr[qId];
+//                qId++;
+//            }
+//        }
+//        counter++;
+//    }
+//
+//    while (pId < a->size) {
+//        result.arr[counter] = a->arr[pId];
+//        pId++;
+//        counter++;
+//    }
+//    while (qId < b->size) {
+//        result.arr[counter] = b->arr[qId];
+//        qId++;
+//        counter++;
+//    }
+//
+//    return DeleteAllZeroFromPoly(counter, result);
+//}
+//
+//Poly PolyAddProperty(Poly *a, Poly *b) {
+//
+//    if (PolyIsZero(a)) {
+//        // printf("CASE ZEROa");
+//        PolyDestroy(a);
+//        return *b;
+//    }
+//    else if (PolyIsZero(b)) {
+//        // printf("CASE ZEROb");
+//        PolyDestroy(b);
+//        return *a;
+//    }
+//
+//    if (PolyIsCoeff(a) && PolyIsCoeff(b)) {
+//        // printf("CASE cc");
+//        return CoeffAddCoeffProperty(a, b);
+//    }
+//    else if (PolyIsCoeff(a) && !PolyIsCoeff(b)) {
+//        // printf("CASE cnc");
+//        return NonCoeffAddCoeffProperty(a, b);
+//    }
+//    else if (!PolyIsCoeff(a) && PolyIsCoeff(b)) {
+//        // printf("CASE ncc");
+//        return NonCoeffAddCoeffProperty(b, a);
+//    }
+//    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b)) {
+//        // printf("CASE ncnc");
+//        return NonCoeffAddNonCoeffProperty(a, b);
+//    }
+//
+//    assert (false);
+//}
+//
+//Poly PolyAdd(const Poly *p, const Poly *q) {
+//    Poly a = PolyClone(p);
+//    Poly b = PolyClone(q);
+//
+//    return PolyAddProperty(&a, &b);
+//}
+//
+//Poly PolyNegProperty(Poly *a) {
+//    if (PolyIsCoeff(a)) {
+//        a->coeff *= -1;
+//    }
+//    else {
+//        for (size_t i = 0; i < a->size; ++i) {
+//            PolyNegProperty(&a->arr[i].p);
+//        }
+//    }
+//
+//    return *a;
+//}
+//
+//Poly PolyNeg(const Poly *p) {
+//    Poly a = PolyClone(p);
+//
+//    return PolyNegProperty(&a);
+//}
+
+/* ZMIANY KONIEC */
+
 /**
  * Podnosi a do potęgi x.
  * @param[in] a : podstawa
@@ -340,26 +649,35 @@ Poly PolyClone(const Poly *p) {
     return p2;
 }
 
+// ZMIANA TODO
+//Poly PolyAddOld(const Poly *p, const Poly *q) {
+//    if (PolyIsZero(p))
+//        return PolyClone(q);
+//    if (PolyIsZero(q))
+//        return PolyClone(p);
+//
+//    if (PolyIsCoeff(p)) {
+//        if (PolyIsCoeff(q))
+//            return CoeffAddCoeff(p, q);
+//
+//        return NonCoeffAddCoeff(q, p);
+//    }
+//
+//    if (PolyIsCoeff(q))
+//        return NonCoeffAddCoeff(p, q);
+//
+//    return NonCoeffAddNonCoeff(p, q);
+//}
+
 Poly PolyAdd(const Poly *p, const Poly *q) {
-    if (PolyIsZero(p))
-        return PolyClone(q);
-    if (PolyIsZero(q))
-        return PolyClone(p);
+    Poly a = PolyClone(p);
+    Poly b = PolyClone(q);
 
-    if (PolyIsCoeff(p)) {
-        if (PolyIsCoeff(q))
-            return CoeffAddCoeff(p, q);
-
-        return NonCoeffAddCoeff(q, p);
-    }
-
-    if (PolyIsCoeff(q))
-        return NonCoeffAddCoeff(p, q);
-
-    return NonCoeffAddNonCoeff(p, q);
+    return PolyAddProperty(&a, &b);
 }
 
 Poly PolyAddMonos(size_t count, const Mono monos[]) {
+    // printf("PAM");
     Mono *myMonos = copyMonoArray(count, monos);
     sortMonosByExp(count, myMonos);
 
@@ -388,26 +706,29 @@ Poly PolyAddMonos(size_t count, const Mono monos[]) {
             continue;
 
         if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
-            Poly pom = PolyAdd(&helper, &myMonos[i].p);
-            PolyDestroy(&helper);
-            PolyDestroy(&myMonos[i].p);
+            Poly pom = PolyAddProperty(&helper, &myMonos[i].p); // ZMIANA
+            //PolyDestroy(&helper); // ZMIANA
+            //PolyDestroy(&myMonos[i].p); // ZMIANA
             helper = pom;
 
             continue;
         }
 
-        result.arr[resultId] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
+        // ZMIANY
+        //result.arr[resultId] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
+        result.arr[resultId] = (Mono) {.p = helper, .exp = helperExp};
 
-        PolyDestroy(&helper);
+        //PolyDestroy(&helper);
         helper = myMonos[i].p;
         helperExp = myMonos[i].exp;
         resultId++;
     }
 
     if (resultId < diffExps)
-        result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
+        // result.arr[diffExps - 1] = (Mono) {.p = PolyClone(&helper), .exp = helperExp};
+        result.arr[diffExps - 1] = (Mono) {.p = helper, .exp = helperExp};
 
-    PolyDestroy(&helper);
+    // PolyDestroy(&helper); // ZMIANA
 
     //przepisujemy tak, żeby nie było wśród jednomianów jednomianów zerowych
     size_t zeros = 0;
@@ -464,13 +785,31 @@ Poly PolyMul(const Poly *p, const Poly *q) {
     return NonCoeffMulNonCoeff(p, q);
 }
 
+// ZMIANA TODO
+//Poly PolyNegOld(const Poly *p) {
+//    Poly p_neg = {.coeff = (-1), .arr = NULL};
+//    Poly result = PolyMul(p, &p_neg);
+//
+//    PolyDestroy(&p_neg);
+//
+//    return result;
+//    if (PolyIsCoeff(p))
+//        return PolyFromCoeff((-1) * p->coeff);
+//
+//    Poly result = PolyCreate(p->size);
+//    for (size_t i = 0; i < p->size; i++) {
+//        Poly neg_poly = PolyNeg(&p->arr[i].p);
+//        result.arr[i].p = neg_poly;
+//    }
+//
+//    printPoly(&result);
+//    return result;
+//}
+
 Poly PolyNeg(const Poly *p) {
-    Poly p_neg = {.coeff = (-1), .arr = NULL};
-    Poly result = PolyMul(p, &p_neg);
+    Poly a = PolyClone(p);
 
-    PolyDestroy(&p_neg);
-
-    return result;
+    return PolyNegProperty(&a);
 }
 
 Poly PolySub(const Poly *p, const Poly *q) {
