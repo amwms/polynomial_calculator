@@ -41,10 +41,10 @@ static size_t howManyDiffExp(size_t count, Mono monos[]) {
     size_t diff = 1;
 
     for (size_t i = 1; i < count; i++) {
-        if (!PolyIsZero(&monos[i].p)) {
+//        if (!PolyIsZero(&monos[i].p) || true) {
             if (monos[i].exp != monos[i - 1].exp)
                 diff++;
-        }
+//        }
     }
 
     return diff;
@@ -453,8 +453,8 @@ static Poly PolyAddMonosForAll(size_t count, Mono *myMonos) {
     size_t resultId = 0;
 
     for (size_t i = 1; i < count; i++) {
-        if (PolyIsZero(&myMonos[i].p))
-            continue;
+//        if (PolyIsZero(&myMonos[i].p))
+//            continue;
 
         if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
             Poly pom = PolyAddProperty(&helper, &myMonos[i].p);
