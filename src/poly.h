@@ -257,4 +257,12 @@ Poly PolyAt(const Poly *p, poly_coeff_t x);
  */
 Poly PolyCompose(const Poly *p, size_t k, Poly q[]);
 
+/**
+ * Dodaje dwa wielomiany przy czym przyjmuje na własność wielomiany @p a i @p b.
+ * @param[in] a : wielomian
+ * @param[in] b : wielomian
+ * @return @f$p + q@f$
+ */
+Poly PolyAddProperty(Poly *a, Poly *b);
+
 #endif /* __POLY_H__ */

@@ -68,7 +68,7 @@ static poly_exp_t maxOfExp(poly_exp_t a, poly_exp_t b) {
     return a < b ? b : a;
 }
 
-static Poly PolyAddProperty(Poly *a, Poly *b);
+//static Poly PolyAddProperty(Poly *a, Poly *b);
 
 /**
  * Dodaje dwa wielomiany które są współczynnikami.
@@ -191,13 +191,14 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
     return DeleteAllZeroFromPoly(counter, result);
 }
 
+// TODO
 /**
  * Dodaje dwa wielomiany przy czym przyjmuje na własność wielomiany @p a i @p b.
  * @param[in] a : wielomian
  * @param[in] b : wielomian
  * @return @f$p + q@f$
  */
-static Poly PolyAddProperty(Poly *a, Poly *b) {
+/*static */Poly PolyAddProperty(Poly *a, Poly *b) {
 
     if (PolyIsZero(a)) {
         PolyDestroy(a);
