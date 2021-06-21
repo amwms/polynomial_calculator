@@ -3999,6 +3999,39 @@ static bool MemoryGroup(void) {
 }
 
 /** MOJE WŁASNE TESTY **/
+static bool SimpleComposeTest(void) {
+    bool res = true;
+    {
+        Poly q[2];
+        q[0] = P(C(1), 4);
+        q[1] = P(P(C(1), 0, C(1), 1) , 1);
+        Poly p = P(C(2), 1);
+        Poly correct = P(C(2), 4);
+        Poly result = PolyCompose(&p, 2, q);
+        res &= PolyIsEq(&correct, &result);
+    }
+    {
+        Poly q[2];
+        q[0] = P(C(1), 4);
+        q[1] = P(P(C(1), 0, C(1), 1) , 1);
+        Poly p = P(C(2), 1);
+        Poly correct = C(0);
+        Poly result = PolyCompose(&p, 0, q);
+        res &= PolyIsEq(&correct, &result);
+    }
+    {
+        Poly q[1];
+        q[0] = P(C(1), 0, C(1), 1);
+        Poly p = P(C(1), 2);
+        Poly correct = P(C(1), 0, C(2), 1, C(1), 2);
+        Poly result = PolyCompose(&p, 1, q);
+        res &= PolyIsEq(&correct, &result);
+    }
+
+    return res;
+}
+
+
 static bool ComposeTest(void) {
     bool res = true;
     {
@@ -4107,6 +4140,7 @@ static const test_list_t test_list[] = {
   TEST(MemoryThiefTest),
   TEST(MemoryFreeTest),
   TEST(MemoryGroup),
+  TEST(SimpleComposeTest),
   TEST(ComposeTest),
   TEST(OwnMonosTest),
   TEST(CloneMonosTest),
