@@ -188,7 +188,6 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
 }
 
 Poly PolyAddProperty(Poly *a, Poly *b) {
-
     if (PolyIsZero(a)) {
         PolyDestroy(a);
         return *b;
@@ -204,10 +203,8 @@ Poly PolyAddProperty(Poly *a, Poly *b) {
         return NonCoeffAddCoeff(a, b);
     else if (PolyIsCoeff(a) && !PolyIsCoeff(b))
         return NonCoeffAddCoeff(b, a);
-    else if (!PolyIsCoeff(a) && !PolyIsCoeff(b))
+    else
         return NonCoeffAddNonCoeff(a, b);
-
-    assert (false);
 }
 
 /**
