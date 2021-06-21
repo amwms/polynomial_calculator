@@ -3998,6 +3998,64 @@ static bool MemoryGroup(void) {
   return RarePolynomialTest() && MemoryThiefTest() && MemoryFreeTest();
 }
 
+/** MOJE WŁASNE TESTY **/
+static bool ComposeTest(void) {
+    bool res = true;
+    {
+        Poly q = P(C(1), 2);
+        Poly p = P(C(2), 0, C(1), 1);
+        Poly correct = P(C(2), 0, C(1), 2);
+        Poly result = PolyCompose(&p, 1, &q);
+        res &= PolyIsEq(&correct, &result);
+    }
+    {
+        Poly q = P(C(2), 0, C(1), 2);
+        Poly p = P(C(1), 3);
+        Poly correct = P(C(8), 0, C(12) , 2, C(6), 4, C(1), 6);
+        Poly result = PolyCompose(&p, 1, &q);
+        res &= PolyIsEq(&correct, &result);
+    }
+    {
+        Poly q[2];
+        q[0] = P(C(1), 4);
+        q[1] = P(P(C(1), 0, C(1), 1) , 1);
+        Poly p = P(P(P(C(1), 6), 5), 2, P(C(1), 0, C(1), 2), 3, C(5), 7);
+        Poly correct = P(C(1), 12, P(C(1) , 0, C(2), 1, C(1), 2), 14, C(5), 28);
+        Poly result = PolyCompose(&p, 2, q);
+        res &= PolyIsEq(&correct, &result);
+    }
+
+    return res;
+}
+
+static bool OwnMonosTest(void) {
+    bool res = true;
+    {
+        Mono *monos = calloc(2, sizeof (Mono));
+        monos[0] = M(P(C(-1), 1), 1);
+        monos[1] = M(P(C(1), 1), 2);
+        Poly p = PolyOwnMonos(2, monos);
+        Poly correct = P(P(C(-1), 1), 1, P(C(1), 1),2);
+        res &= PolyIsEq(&p, &correct);
+    }
+
+    return res;
+}
+
+static bool CloneMonosTest(void) {
+    bool res = true;
+    {
+        Mono *monos = calloc(2, sizeof (Mono));
+        monos[0] = M(P(C(-1), 1), 1);
+        monos[1] = M(P(C(1), 1), 2);
+        Poly p = PolyCloneMonos(2, monos);
+        Poly correct = P(P(C(-1), 1), 1, P(C(1), 1),2);
+        res &= PolyIsEq(&p, &correct);
+    }
+
+    return res;
+}
+
 /** URUCHAMIANIE TESTÓW **/
 
 // Możliwe wyniki testu
@@ -4049,6 +4107,9 @@ static const test_list_t test_list[] = {
   TEST(MemoryThiefTest),
   TEST(MemoryFreeTest),
   TEST(MemoryGroup),
+  TEST(ComposeTest),
+  TEST(OwnMonosTest),
+  TEST(CloneMonosTest),
 };
 
 int main() {
@@ -4059,7 +4120,7 @@ int main() {
         passingAll &= test_list[i].function();
 
         if (!passingAll) {
-            fprintf(stderr, "\n NOT PASSING TEST %zu \a \a \a \n", i);
+            fprintf(stderr, "\n NOT PASSING TEST %zu \a \a \a \n", i + 1);
             return 0;
         }
     }
