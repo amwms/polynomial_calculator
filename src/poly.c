@@ -41,10 +41,8 @@ static size_t howManyDiffExp(size_t count, Mono monos[]) {
     size_t diff = 1;
 
     for (size_t i = 1; i < count; i++) {
-//        if (!PolyIsZero(&monos[i].p) || true) {
-            if (monos[i].exp != monos[i - 1].exp)
-                diff++;
-//        }
+        if (monos[i].exp != monos[i - 1].exp)
+            diff++;
     }
 
     return diff;
@@ -91,46 +89,6 @@ static Poly CoeffAddCoeff(Poly *a, Poly *b) {
  * @return @f$a + b@f$
  */
 static Poly NonCoeffAddCoeff(Poly *a, Poly *b) {
-//    assert(!PolyIsCoeff(p) && PolyIsCoeff(q));
-//    assert(isSorted(p));
-//
-//    size_t size = p->size;
-//
-//    //przypadek że q == 0
-//    if (PolyIsZero(q))
-//        return PolyClone(p);
-//
-//    //przypadek że nie istnieje czynnik x_0^0(...)
-//    if (p->arr[size - 1].exp != 0) {
-//        Poly result = PolyClone(p);
-//        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size + 1));
-//
-//        result.size++;
-//        result.arr[size] = MonoFromPoly(q, 0);
-//
-//        return result;
-//    }
-//
-//    //przypadek że istnieje czynnik x_0^0(...)
-//    Poly result = PolyClone(p);
-//    Poly res = PolyAdd(&p->arr[size - 1].p, q);
-//
-//    PolyDestroy(&result.arr[size - 1].p);
-//    result.arr[size - 1].p = res;
-//
-//    if (PolyIsZero(&res)) {
-//        result.arr = (Mono*) safeRealloc(result.arr, sizeof(Mono) * (size - 1));
-//        result.size--;
-//    }
-//
-//    if (result.size == 0) {
-//        PolyDestroy(&result);
-//
-//        return PolyZero();
-//    }
-//
-//    return result;
-
     assert(!PolyIsCoeff(a) && PolyIsCoeff(b));
     assert(isSorted(a));
 
@@ -141,9 +99,13 @@ static Poly NonCoeffAddCoeff(Poly *a, Poly *b) {
     return PolyAddProperty(&helper, a);
 }
 
-//funkcja pomocnicza do komentowania TODO
+/**
+ * Usuwa wszytskie jednomiany zerowe z wielomianu @p result.
+ * @param[in] diffExps : liczba jednomianów
+ * @param[in] result : wielomian
+ * @return wielomian @p result z usuniętymi jednomianami zerowymi
+ */
 static Poly DeleteAllZeroFromPoly(size_t diffExps, Poly result) {
-    //przepisujemy tak, żeby nie było wśród jednomianów jednomianów zerowych
     size_t zeros = 0;
     for (size_t i = 0; i < diffExps; i++) {
         if (PolyIsZero(&result.arr[i].p))
@@ -229,7 +191,12 @@ static Poly NonCoeffAddNonCoeff(Poly *a, Poly *b) {
     return DeleteAllZeroFromPoly(counter, result);
 }
 
-// TODO
+/**
+ * Dodaje dwa wielomiany przy czym przyjmuje na własność wielomiany @p a i @p b.
+ * @param[in] a : wielomian
+ * @param[in] b : wielomian
+ * @return @f$p + q@f$
+ */
 static Poly PolyAddProperty(Poly *a, Poly *b) {
 
     if (PolyIsZero(a)) {
@@ -353,15 +320,18 @@ static Poly NonCoeffMulNonCoeff(const Poly *p, const Poly *q) {
     return result;
 }
 
-// TODO
+/**
+ * Zwraca przeciwny wielomian przy czym przyjmuje na własność wielomian @p a.
+ * @param[in] a : wielomian
+ * @return @f$-a@f$
+ */
 Poly PolyNegProperty(Poly *a) {
     if (PolyIsCoeff(a)) {
         a->coeff *= -1;
     }
     else {
-        for (size_t i = 0; i < a->size; ++i) {
+        for (size_t i = 0; i < a->size; i++)
             PolyNegProperty(&a->arr[i].p);
-        }
     }
 
     return *a;
@@ -418,7 +388,12 @@ static Mono* copyMonoArray(size_t count, const Mono monos[]) {
     return result;
 }
 
-// TODO
+/**
+ * Robi głęboką kopię tablicy jednomianów.
+ * @param[in] count : liczba jednomianów
+ * @param[in] monos : tablica jednomianów
+ * @return skopiowana tablica jednomianów
+ */
 static Mono* deepCopyMonoArray(size_t count, const Mono monos[]) {
     Mono *result = safeMalloc(sizeof(Mono) * count);
 
@@ -428,7 +403,12 @@ static Mono* deepCopyMonoArray(size_t count, const Mono monos[]) {
     return result;
 }
 
-// TODO
+/**
+ * Sumuje listę jednomianów i tworzy z nich wielomian.
+ * @param[in] count : liczba jednomianów
+ * @param[in] myMonos : tablica jednomianów
+ * @return wielomian będący sumą jednomianów
+ */
 static Poly PolyAddMonosForAll(size_t count, Mono *myMonos) {
     sortMonosByExp(count, myMonos);
 
@@ -453,9 +433,6 @@ static Poly PolyAddMonosForAll(size_t count, Mono *myMonos) {
     size_t resultId = 0;
 
     for (size_t i = 1; i < count; i++) {
-//        if (PolyIsZero(&myMonos[i].p))
-//            continue;
-
         if (compareMonosByExp(&myMonos[i - 1], &myMonos[i]) == 0) {
             Poly pom = PolyAddProperty(&helper, &myMonos[i].p);
             helper = pom;

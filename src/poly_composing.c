@@ -7,7 +7,12 @@
 #include "poly.h"
 #include "poly_composing.h"
 
-// TODO
+/**
+ * Szybkie potęgowanie wielomianu.
+ * @param[in] p : wielomian
+ * @param[in] x : wykładnik
+ * @return wielomian @p p podniesiony do @p x-tej potęgi
+ */
 Poly polyQuickPower(Poly p, poly_exp_t x) {
     if (x == 0)
         return PolyFromCoeff(1);
@@ -25,7 +30,7 @@ Poly polyQuickPower(Poly p, poly_exp_t x) {
     return result;
 }
 
-Poly compose(Poly *p, size_t k, Poly *q) { // q to tablica wielomianów
+Poly compose(const Poly *p, size_t k, Poly *q) {
     if (PolyIsCoeff(p))
         return *p;
 

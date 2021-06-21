@@ -85,6 +85,7 @@ bool hasTwoPolysStack(Stack *stack);
 /**
  * Sprawdza czy stos ma k elementów.
  * @param[in] stack : stos
+ * @param[in] k : ile co najmniej elementów ma być na stosie
  * @return czy stos ma dwa elementy
 */
 bool hasKPolysStack(Stack *stack, size_t k);
