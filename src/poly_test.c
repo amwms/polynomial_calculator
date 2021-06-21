@@ -4059,12 +4059,12 @@ int main() {
         passingAll &= test_list[i].function();
 
         if (!passingAll) {
-            fprintf(stderr, "\n NOT PASSING TEST %zu \a\a\a \n", i);
+            fprintf(stderr, "\n NOT PASSING TEST %zu \a \a \a \n", i);
             return 0;
         }
     }
-
-    fprintf(stderr, "\n%s\n", passingAll ? "PASSED ALL TESTS!!!" : "NOT PASSING ALL TESTS!\a\a\a");
+    fprintf(stderr, "\r%ld/%ld", SIZE(test_list), SIZE(test_list));
+    fprintf(stderr, "\n%s\n", passingAll ? "PASSED ALL TESTS!!!" : "NOT PASSING ALL TESTS! \a \a \a");
 
     return 0;
 }
