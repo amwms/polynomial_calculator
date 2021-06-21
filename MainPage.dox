@@ -53,4 +53,19 @@ operacje (jeśli operacja nie istnieje lub ma złe parametry wypisuje odpowiedni
 - PRINT – wypisuje na standardowe wyjście wielomian z wierzchołka stosu;
 - POP – usuwa wielomian z wierzchołka stosu.
 
+### COMPOSE
+Do napisania funkcji PolyCompose wykorzystuję funkcje zaimplementowane poly_composing.c.
+
+Wykorzystuję szybkie potęgowanie wielomianów, w którym zaimplementowałam optymalizację polegającą na wczęsniejszym obliczeniu wszystkich potęg (postaci @f$2^n@f$) wielomianu.
+
+Została również dodana komenda COMPOSE do kalkulatora wielomianów.
+
+- COMPOSE - składanie wielomianów:
+
+Definiujemy operację składania wielomianów. Dany jest wielomian @f$p@f$ oraz @f$k@f$ wielomianów @f$q_0, q_1, q_2, …, q_{k−1}@f$.
+Niech l oznacza liczbę zmiennych wielomianu @f$p@f$ i niech te zmienne są oznaczone odpowiednio @f$x_0, x_1, x_2, …, x_{l−1}@f$.
+Wynikiem złożenia jest wielomian @f$p(q_0,q_1,q_2,…)@f$, czyli wielomian powstający przez podstawienie w wielomianie @f$p@f$
+pod zmienną @f$x_i@f$ wielomianu @f$q_i@f$ dla @f$i=0,1,2,…,min(k,l)−1@f$.
+Jeśli @f$k<l@f$, to pod zmienne @f$x_k, …, x_{l−1}@f$ podstawiamy zera. Na przykład, jeśli @f$k=0@f$, to wynikiem złożenia jest liczba p(0,0,0,…).
+
 */
