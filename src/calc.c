@@ -41,7 +41,7 @@ int main() {
         count++;
     }
 
-    for(int i = 0; i < stack->sizeUsed; i++)
+    for (size_t i = 0; i < stack->sizeUsed; i++)
         PolyDestroy(&stack->polys[i]);
     free(stack->polys);
     free(stack);

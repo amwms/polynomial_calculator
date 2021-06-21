@@ -40,9 +40,12 @@ Poly compose(Poly *p, size_t k, Poly *q) { // q to tablica wielomianów
         PolyDestroy(&res2);
         PolyDestroy(&resPow);
 
-        result = PolyAdd(&result, &resMull);
+        Poly helper = PolyAdd(&result, &resMull);
 
+        PolyDestroy(&result);
         PolyDestroy(&resMull);
+
+        result = helper;
     }
 
     return result;

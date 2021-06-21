@@ -49,7 +49,7 @@ int readLine(char **verse, int *len, int *allocedVerseMemory) {
 bool isWhitespace (char c) {
     char *signs = " \t\n\v\f\r";
 
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 6; i++) {
         if (c == signs[i])
             return 1;
     }
