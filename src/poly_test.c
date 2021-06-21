@@ -4054,18 +4054,17 @@ static const test_list_t test_list[] = {
 int main() {
     bool passingAll = true;
 
-    for (size_t i = 0; i < SIZE(test_list); i++)
-    {
+    for (size_t i = 0; i < SIZE(test_list); i++) {
         fprintf(stderr, "\r%ld/%ld", i, SIZE(test_list));
         passingAll &= test_list[i].function();
 
         if (!passingAll) {
-            fprintf(stderr, "\n NOT PASSING TEST %zu \a \n", i);
+            fprintf(stderr, "\n NOT PASSING TEST %zu \a\a\a \n", i);
             return 0;
         }
     }
 
-    fprintf(stderr, "\n%s\n", passingAll ? "PASSED ALL TESTS!!!" : "NOT PASSING ALL TESTS!\a");
+    fprintf(stderr, "\n%s\n", passingAll ? "PASSED ALL TESTS!!!" : "NOT PASSING ALL TESTS!\a\a\a");
 
     return 0;
 }
