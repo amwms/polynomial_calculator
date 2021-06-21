@@ -10,54 +10,10 @@
 #include "memory.h"
 
 /**
- * Szybkie potęgowanie wielomianu.
- * @param[in] p : wielomian
+ * Znalezienie największej potęgi liczby dwa mniejszej od @p x.
  * @param[in] x : wykładnik
- * @return wielomian @p p podniesiony do @p x-tej potęgi
+ * @return największa potęga liczby dwa mniejsza od @p x.
  */
-//Poly polyQuickPower(Poly p, poly_exp_t x) {
-//    if (x == 0)
-//        return PolyFromCoeff(1);
-//
-//    Poly resMul = PolyMul(&p, &p);
-//    Poly result = polyQuickPower(resMul, x / 2);
-//    PolyDestroy(&resMul);
-//
-//    if (x & 1) {
-//        Poly helper = PolyMul(&result, &p);
-//        PolyDestroy(&result);
-//        result = helper;
-//    }
-//
-//    return result;
-//}
-//
-//Poly compose(const Poly *p, size_t k, Poly *q) {
-//    if (PolyIsCoeff(p))
-//        return *p;
-//
-//    Poly result = PolyZero();
-//    Poly sub = k > 0 ? q[0] : PolyZero();
-//
-//    for (size_t i = 0; i < p->size; i++) {
-//         Poly resPow = polyQuickPower(sub, p->arr[i].exp);
-//         Poly res2 = compose(&p->arr[i].p, k > 0 ? k - 1 : 0, q + 1);
-//         Poly resMull = PolyMul(&res2, &resPow);
-//
-//        PolyDestroy(&res2);
-//        PolyDestroy(&resPow);
-//
-//        Poly helper = PolyAdd(&result, &resMull);
-//
-//        PolyDestroy(&result);
-//        PolyDestroy(&resMull);
-//
-//        result = helper;
-//    }
-//
-//    return result;
-//}
-
 static poly_exp_t greatestPowerOfTwoLeqX(poly_exp_t x) {
     for (poly_exp_t i = 30; i > 0; i--) {
         if ((1 << i) & x)
@@ -67,6 +23,12 @@ static poly_exp_t greatestPowerOfTwoLeqX(poly_exp_t x) {
     return 0;
 }
 
+/**
+ * Obliczenie wszytskich potęg wielomianu @p p od 0 do potęgi @p maxPower.
+ * @param[in] p : wielomian
+ * @param[in] maxPower : wykładnik
+ * @return tablica wszytskich potęg wielomianu @p p od 0 do potęgi @p maxPower
+ */
 static Poly* polyPowersArray(Poly *p, poly_exp_t maxPower) {
     Poly *powersArray = safeMalloc(sizeof(Poly) * (maxPower + 1));
 
@@ -79,7 +41,13 @@ static Poly* polyPowersArray(Poly *p, poly_exp_t maxPower) {
     return powersArray;
 }
 
-// quicker power of poly
+/**
+ * Szybkie potęgowanie wielomianu.
+ * @param[in] x : wykładnik
+ * @param[in] maxPower : maksymalna potęga
+ * @param[in] powersArray : tablica wszytskich potęg wielomianu @p p od 0 do potęgi @p maxPower
+ * @return wielomian @p p podniesiony do @p x-tej potęgi
+ */
 static Poly polyQuickPower(poly_exp_t x, poly_exp_t maxPower, Poly *powersArray) {
     if (x == 0)
         return PolyFromCoeff(1);

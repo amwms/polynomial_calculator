@@ -4063,6 +4063,7 @@ int main() {
             return 0;
         }
     }
+
     fprintf(stderr, "\r%ld/%ld", SIZE(test_list), SIZE(test_list));
     fprintf(stderr, "\n%s\n", passingAll ? "PASSED ALL TESTS!!!" : "NOT PASSING ALL TESTS! \a \a \a");
 
