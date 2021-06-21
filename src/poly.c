@@ -8,9 +8,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
 #include "memory.h"
-#include "parse.h"
 #include "poly.h"
 #include "poly_composing.h"
 

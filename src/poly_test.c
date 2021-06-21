@@ -3,8 +3,6 @@
 #endif
 
 #include "poly.h"
-#include "parse.h"
-#include "poly_composing.h"
 #include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
